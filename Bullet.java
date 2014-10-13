@@ -10,7 +10,7 @@ public class Bullet {
   public float[] position = {0,0}; // Angle, Distance
   public float[] origin = {0,0}; // X, Y
   public boolean living = false;
-  public boolean dangerous = false;
+  public boolean enemy = false;
   public Bullet() {
     // create
   }
