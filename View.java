@@ -9,15 +9,42 @@ public class View {
     new Color(255,255,255), // 1  White
     new Color(0,0,255),     // 2  Blue
   };
-  public Polygon getHex(int size) {
+  public void drawHex(Graphics2D g2d, int width, int height) {
     Polygon p = new Polygon();
-    p.addPoint(0*size,2*size);
-    p.addPoint(4*size,0*size);
-    p.addPoint(8*size,2*size);
-    p.addPoint(8*size,7*size);
-    p.addPoint(4*size,9*size);
-    p.addPoint(0*size,7*size);
-    return p;
+    double x = 8.0;
+    double y = 9.0;
+    double scaleX = (double)width;
+    double scaleY = (double)height;
+    p.addPoint((int)(0.0/x*scaleX),(int)(2.0/y*scaleY));
+    p.addPoint((int)(4.0/x*scaleX),(int)(0.0/y*scaleY));
+    p.addPoint((int)(8.0/x*scaleX),(int)(2.0/y*scaleY));
+    p.addPoint((int)(8.0/x*scaleX),(int)(7.0/y*scaleY));
+    p.addPoint((int)(4.0/x*scaleX),(int)(9.0/y*scaleY));
+    p.addPoint((int)(0.0/x*scaleX),(int)(7.0/y*scaleY));
+    g2d.drawPolygon(p);
+  }
+  public void drawTile(Tile tile, Graphics2D g2d, int x, int y, int width, int height) {
+    g2d.translate(x,y);
+    drawHex(g2d, width,height);
+    g2d.translate(-x,-y);
+  }
+  public void drawGrid(Game game, Graphics2D g2d, int[] screen) { 
+    int hexWidth = screen[0]/8;
+    int hexHeight = hexWidth/8*9;
+    Grid grid = game.grid;
+    g2d.setColor(COLORS[1]);
+    boolean off = true;
+    for(int y = 0; y < grid.getHeight(); y++) {
+      int leftOffset = 0;
+      if(off) { off = false; leftOffset = -hexWidth/2; }
+      else { off = true; }
+      for(int x = 0; x < grid.getWidth(); x++) {
+        Tile tile = grid.getTile(x,y);
+        
+        drawTile(tile,g2d,hexWidth*x+leftOffset,hexHeight/9*7*y,hexWidth,hexHeight);
+        
+      }
+    }
   }
   public void draw(Game game, Graphics2D g2d) {
     // Gets Actual screen dimensions.
@@ -48,31 +75,7 @@ public class View {
     if(game.state == 0) { drawKeyConfig(game,g2d,screen); }
     else if (game.state == 1) {
       // Menu
-      int size = 1*(screen[1]/100);
-      g2d.setColor(COLORS[1]);
-      Polygon hex = getHex(size);
-      Rectangle bounds = hex.getBounds();
-      float hexes[] = new float[2];
-      hexes[0] = (float)bounds.getWidth();
-      hexes[1] = (float)bounds.getHeight();
-      int hexX = (screen[0]/(int)hexes[0])+1;
-      int hexY = (screen[1]/(int)(hexes[1]-(hexes[1]/9*2)))+1;
-      boolean offset = false;
-      int origin[] = new int[2];
-      for(int i = 0; i < hexY; i++) {
-        for(int j = 0; j < hexX; j++) {
-          g2d.drawPolygon(hex);
-          g2d.translate(hexes[0],0);
-          origin[0] += hexes[0];
-        }
-        origin[0] -= hexes[0] * hexX;
-        origin[1] += hexes[1]-(hexes[1]/9*2);
-        g2d.translate(-hexes[0]*hexX,hexes[1]-(hexes[1]/9*2));
-        if(offset) { g2d.translate(hexes[0]/2,0); offset = false; }
-        else { g2d.translate(-hexes[0]/2,0); offset = true; }
-      }
-      if(offset) { g2d.translate(hexes[0]/2,0); }
-      g2d.translate(-origin[0],-origin[1]);
+      drawGrid(game,g2d,screen);
     }
     // Draw letterbox
     g2d.translate(-margin[0],-margin[1]);

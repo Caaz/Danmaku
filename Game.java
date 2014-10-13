@@ -15,6 +15,8 @@ public class Game extends JPanel  {
   public Bullet bullets[] = new Bullet[255];
   public View view = new View();
   public Menu menu = new Menu();
+  //public Game game = new Game;
+  public Grid grid = new Grid();
   // In game shit
   public int state = 0; // State
   /*
