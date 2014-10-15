@@ -24,27 +24,48 @@ public class View {
     g2d.drawPolygon(p);
   }
   public void drawTile(Tile tile, Graphics2D g2d, int x, int y, int width, int height) {
-    g2d.translate(x,y);
-    drawHex(g2d, width,height);
-    g2d.translate(-x,-y);
+    if(tile.visible) {
+      g2d.translate(x,y);
+      g2d.setColor(tile.color);
+      drawHex(g2d,width,height);
+      
+      if(tile.hasText()) {
+        //System.out.println("Drawing text "+tile.text);
+        //g2d.translate(0,height/9*5);
+        g2d.setFont(new Font("SansSerif", Font.PLAIN, (int)(height/9*1.5)));
+        drawCenteredString(tile.text, width, height, g2d);
+        //g2d.drawString(tile.text,0,0);
+        //g2d.translate(0,-height/9*5);
+      }
+      
+      g2d.translate(-x,-y);
+    }
+  }
+  public void drawCenteredString(String s, int w, int h, Graphics2D g) {
+    FontMetrics fm = g.getFontMetrics();
+    int x = (w - fm.stringWidth(s)) / 2;
+    int y = (fm.getAscent() + (h - (fm.getAscent() + fm.getDescent())) / 2);
+    g.drawString(s, x, y);
   }
   public void drawGrid(Game game, Graphics2D g2d, int[] screen) { 
     int hexWidth = screen[0]/8;
     int hexHeight = hexWidth/8*9;
-    Grid grid = game.grid;
     g2d.setColor(COLORS[1]);
-    boolean off = true;
-    for(int y = 0; y < grid.getHeight(); y++) {
+    boolean off = false;
+    g2d.translate(-hexWidth+hexWidth/2,-hexHeight/9*7);
+    for(int y = 0; y < game.grid.getHeight(); y++) {
       int leftOffset = 0;
       if(off) { off = false; leftOffset = -hexWidth/2; }
       else { off = true; }
-      for(int x = 0; x < grid.getWidth(); x++) {
-        Tile tile = grid.getTile(x,y);
+      for(int x = 0; x < game.grid.getWidth(); x++) {
+        Tile tile = game.grid.getTile(x,y);
         
+        //System.out.println((tile.visible)?"True":"False");
         drawTile(tile,g2d,hexWidth*x+leftOffset,hexHeight/9*7*y,hexWidth,hexHeight);
         
       }
     }
+    g2d.translate(hexWidth-hexWidth/2,hexHeight/9*7);
   }
   public void draw(Game game, Graphics2D g2d) {
     // Gets Actual screen dimensions.
@@ -79,7 +100,7 @@ public class View {
     }
     // Draw letterbox
     g2d.translate(-margin[0],-margin[1]);
-    g2d.setColor(COLORS[2]);
+    g2d.setColor(COLORS[0]);
     g2d.fillRect(0,0,margin[0],screen[1]);
     g2d.fillRect(0,0,screen[0],margin[1]);
     g2d.translate(res.width,res.height);

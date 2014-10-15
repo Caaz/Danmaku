@@ -1,22 +1,42 @@
 public class Grid {
-  Tile array[][] = new Tile[9][7];
+  public Tile array[][] = new Tile[9][7];
   public Grid() {
     // 
+    for(int y = 0; y < getHeight(); y++) {
+      for(int x = 0; x < getWidth(); x++) {
+        array[x][y] = new Tile();
+      }
+    }
   }
-  public int getWidth() {
-    return 9;
-  }
-  public int getHeight() {
-    return 7;
-  }
+  public int getWidth() { return 9; }
+  public int getHeight() { return 7; }
   public Tile getTile(int x, int y) {
-    Tile tile;
+    Tile mytile = new Tile();
     try {
-      tile = array[x][y];
+      //System.out.println("Actual tile returned");
+      mytile = array[x][y];
     }
     catch(ArrayIndexOutOfBoundsException e) {
-      tile = new Tile();
+      //System.out.println("Out of bounds tile");
     }
-    return tile;
+    finally {
+      //System.out.println("Returning false tile");
+      return mytile;
+    }
+  }
+  public void makeHole() {
+    for(int y = 0; y < getHeight(); y++) {
+      for(int x = 0; x < getWidth(); x++) {
+        if(((y == 1) || (y == 5)) && (x>=3) && (x<=5)) {
+          array[x][y].visible = false; 
+        }
+        if(((y == 2) || (y == 4)) && (x>=2) && (x<=5)) { 
+          array[x][y].visible = false; 
+        }
+        if((y == 3) && (x>=2) && (x<=6)) { 
+          array[x][y].visible = false; 
+        }
+      }
+    }
   }
 }

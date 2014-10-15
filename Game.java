@@ -105,6 +105,14 @@ public class Game extends JPanel  {
     }
     else if(state == 1) {
       // Menu
+      grid.makeHole();
+      Tile tile;
+      tile = grid.getTile(6,2);
+      tile.setText("Controls");
+      tile = grid.getTile(7,3);
+      tile.setText("Start");
+      tile = grid.getTile(6,4);
+      tile.setText("Credits");
     }
     else if(state == 2) {
       // In Game
