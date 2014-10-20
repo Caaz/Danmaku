@@ -23,19 +23,18 @@ public class View {
     p.addPoint((int)(0.0/x*scaleX),(int)(7.0/y*scaleY));
     g2d.drawPolygon(p);
   }
-  public void drawTile(Tile tile, Graphics2D g2d, int x, int y, int width, int height) {
+  public void drawTile(Tile tile, Graphics2D g2d, int x, int y, int width, int height, Menu menu) {
     if(tile.visible) {
       g2d.translate(x,y);
-      g2d.setColor(tile.color);
+      
+      if((tile.menuID >= 0) && (tile.menuID == menu.selected)) { g2d.setColor(COLORS[2]); }
+      else { g2d.setColor(tile.color); }
+      
       drawHex(g2d,width,height);
       
-      if(tile.hasText()) {
-        //System.out.println("Drawing text "+tile.text);
-        //g2d.translate(0,height/9*5);
+      if(tile.menuID >= 0) {
         g2d.setFont(new Font("SansSerif", Font.PLAIN, (int)(height/9*1.5)));
-        drawCenteredString(tile.text, width, height, g2d);
-        //g2d.drawString(tile.text,0,0);
-        //g2d.translate(0,-height/9*5);
+        drawCenteredString(menu.get(tile.menuID), width, height, g2d);
       }
       
       g2d.translate(-x,-y);
@@ -61,7 +60,7 @@ public class View {
         Tile tile = game.grid.getTile(x,y);
         
         //System.out.println((tile.visible)?"True":"False");
-        drawTile(tile,g2d,hexWidth*x+leftOffset,hexHeight/9*7*y,hexWidth,hexHeight);
+        drawTile(tile,g2d,hexWidth*x+leftOffset,hexHeight/9*7*y,hexWidth,hexHeight,game.menu);
         
       }
     }
@@ -93,7 +92,7 @@ public class View {
     // Translate to the screen's position
     g2d.translate(margin[0],margin[1]);
     
-    if(game.state == 0) { drawKeyConfig(game,g2d,screen); }
+    if(game.state == 0) { drawGrid(game,g2d,screen); }
     else if (game.state == 1) {
       // Menu
       drawGrid(game,g2d,screen);
