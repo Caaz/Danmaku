@@ -38,12 +38,10 @@ public class Game extends JPanel  {
 			}
 			@Override
 			public void keyPressed(KeyEvent e) {
-        //System.out.println("Pressed : "+e.getKeyCode()+" - "+KeyEvent.getKeyText(e.getKeyCode()));
         keys[e.getKeyCode()] = true;
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {
-        //System.out.println("Released: "+e.getKeyCode()+" - "+KeyEvent.getKeyText(e.getKeyCode()));
         keys[e.getKeyCode()] = false;
 			}
 		};

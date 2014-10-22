@@ -14,6 +14,7 @@ public class View {
     //Translate
     g2d.translate(screen[0]/8,0);
     g2d.translate(player.position[0]/500*screen[1],player.position[1]/500*screen[1]);
+    System.out.println("Translating to "+player.position[0]/500*screen[1]+ "x"+player.position[1]/500*screen[1]);
     
     // Working polygon
     Polygon wPoly = new Polygon();
