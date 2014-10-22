@@ -1,6 +1,6 @@
-//
-// Mindmap thing : https://coggle.it/diagram/542f2d3b5467340e16003f60/0e32f3c089192d2795fa4eba7e5a640b08d8700187f7e204ce3eb58646b11f83
-//
+/*
+  Mindmap thing : https://coggle.it/diagram/542f2d3b5467340e16003f60/0e32f3c089192d2795fa4eba7e5a640b08d8700187f7e204ce3eb58646b11f83
+*/
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -217,8 +217,15 @@ public class Game extends JPanel  {
       }
     }
   }
+  
+  
+  // Here's where drawing happens!
   public void paintComponent(Graphics g) {
-    Graphics2D g2d = (Graphics2D)g;
+    // Or is it...
+    // We make a graphics 2d object from our boring ol graphics object
+    Graphics2D g2d = (Graphics2D)g; // I don't know why it looks this way... It could probably be different...
+    // Now lets just pass this to the view class
     view.draw(this,g2d);
+    // Why? Because drawing code is fucking HUGE.
   }
 }
