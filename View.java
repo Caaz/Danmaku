@@ -9,6 +9,28 @@ public class View {
     new Color(255,255,255), // 1  White
     new Color(0,0,255),     // 2  Blue
   };
+  public void drawPlayer(Graphics2D g2d, Player player, int[] screen) {
+    int scale = screen[1]/100;
+    //Translate
+    g2d.translate(screen[0]/8,0);
+    g2d.translate(player.position[0]/500*screen[1],player.position[1]/500*screen[1]);
+    
+    // Working polygon
+    Polygon wPoly = new Polygon();
+    // draw hitbox
+    int turret[][] = {{2,2,3,3,4,4,5,5},{1,-3,-4,-6,-6,-4,-3,1}};
+    for(int i = 0; i < turret[0].length; i++) {
+      wPoly.addPoint(turret[0][i]*scale,turret[1][i]*scale);
+    }
+    for(int f = 0; f < turret[0].length; f++) { turret[0][f] = turret[0][f]-turret[0][f]*2;
+    }
+    //System.out.println("Drawing turret");
+    g2d.setColor(COLORS[1]);
+    g2d.drawPolygon(wPoly);
+    //Back
+    g2d.translate(-(player.position[0]/500*screen[1]),-(player.position[1]/500*screen[1]));
+    g2d.translate(-(screen[0]/8),0);
+  }
   public void drawHex(Graphics2D g2d, int width, int height) {
     Polygon p = new Polygon();
     double x = 8.0;
@@ -93,10 +115,8 @@ public class View {
     g2d.translate(margin[0],margin[1]);
     
     if(game.state == 0) { drawGrid(game,g2d,screen); }
-    else if (game.state == 1) {
-      // Menu
-      drawGrid(game,g2d,screen);
-    }
+    else if (game.state == 1) { drawGrid(game,g2d,screen); }
+    else if(game.state == 4) { drawPlayer(g2d,game.player,screen); }
     // Draw letterbox
     g2d.translate(-margin[0],-margin[1]);
     g2d.setColor(COLORS[0]);

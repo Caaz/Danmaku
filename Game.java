@@ -120,11 +120,11 @@ public class Game extends JPanel  {
     }
     else if(state == 1) {
       // Menu
-      if(menu.getLength() != 3) {
+      if(menu.getLength() != 4) {
         System.out.println("Setting Normal Menu");
         grid.makeHole();
-        int menuPos[][] = {{6,2},{7,3},{6,4}};
-        String labels[] = {"Controls","Start","Credits"};
+        int menuPos[][] = {{6,2},{7,3},{6,4},{6,5}};
+        String labels[] = {"Controls","Start","Credits","Testing"};
         menu = new Menu(labels,1);
         for(int menuItem = 0; menuItem < menuPos.length; menuItem++) {
           Tile tile;
@@ -157,6 +157,10 @@ public class Game extends JPanel  {
             else if(menu.selected == 1) {
               // Start
               state = 2;
+            }
+            else if(menu.selected == 3) {
+              // Testbed
+              state = 4;
             }
           }
           else {
