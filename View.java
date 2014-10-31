@@ -73,7 +73,13 @@ public class View {
           float scale = screen[1]/300;
           
           int bullet[][] = {{0,2,0,-2,0},{-2,0,2,0,-2}};
-          drawShapeWithLines(g2d,bullet,scale,new Color(255,255,255),new Color(0,0,0));
+          
+          Color bColor = new Color(200,200,255);
+          if(bullets[i].friendly == false) {
+            bColor = new Color(255,100,100);
+          }
+          
+          drawShapeWithLines(g2d,bullet,scale,new Color(0,0,0),bColor);
           
           // Translate back to where we started.
           g2d.translate(-(bullets[i].position[0]/500*screen[1]),-(bullets[i].position[1]/500*screen[1]));

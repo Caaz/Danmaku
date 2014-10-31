@@ -219,42 +219,50 @@ public class Game extends JPanel  {
     }
     else if(state == 4) {
       // Testing grounds.
-          // {"UP", "DOWN", "LEFT", "RIGHT", "SHOOT", "BOMB", "SLOW", "PAUSE"}
-          //   0     1       2       3        4        5       6       7
-      if(keys[player.controls[0]]) { player.velocity[1] -= 1; }
-      if(keys[player.controls[1]]) { player.velocity[1] += 1; }
-      if(keys[player.controls[2]]) { player.velocity[0] -= 1; }
-      if(keys[player.controls[3]]) { player.velocity[0] += 1; }
-      if(keys[player.controls[4]]) {
-        spawnBullet(player,sysTime);
-      }
+      // {"UP", "DOWN", "LEFT", "RIGHT", "SHOOT", "BOMB", "SLOW", "PAUSE"}
+      //   0     1       2       3        4        5       6       7
       // Actual update shit
-      player.update();
+      player.update(sysTime, this); // I wonder if this matters...
       updateBullets(sysTime);
     }
   }
+  
+  // This updates every individual bullet.
   public void updateBullets(long time) {
+    // Loop through all the available bullets
     for(int i = 0; i < bullets.length; i++) {
+      // Try block for safety.
       try {
-        if(bullets[i].living == true) {
-          bullets[i].update(time);
-        }
-      } catch(NullPointerException e) {
-        bullets[i] = new Bullet(player,time);   
+        // If the bullet is alive, then let's update it.
+        if(bullets[i].living == true) { bullets[i].update(time); }
+      }
+      // If the bullet was never initialized, it'd throw a null pointer exception.
+      catch(NullPointerException e) {
+        // Right here I had copied the code from the spawnBullet method, and it was creating a new bullet every time the game started!
+        // Anyway... If we throw this error, this means we've essentially hit the end of the list of bullets that exist, so we can break the loop here for efficiency.
         break;
+        // Which means we won't check any more bullets after this one.
       }
     }
   }
-  public void spawnBullet(Player player, long time) {
-    // Bullet created by player
+  //public Bullet(boolean friendly, long birth, long life, float origin[], float offset[], float pattern[]) {
+  public void createBullet(boolean friendly, long birth, long life, float origin[], float offset[], float pattern[]) {
     for(int i = 0; i < bullets.length; i++) {
+      // Try for safety!
       try {
+        // Check if the bullet is living...
         if(bullets[i].living == false) {
-          bullets[i] = new Bullet(player,time);       
+          // And if it's not, then that means we can place a new bullet here, because it wasn't being used anyway.
+          bullets[i] = new Bullet(friendly,birth,life,origin,offset,pattern);
+          // And then lets break out of this loop because we no longer need to look through the array.
           break;
         }
-      } catch(NullPointerException e) {
-        bullets[i] = new Bullet(player,time);   
+      }
+      // However there's this problem of if no bullets existed! Or the specific one we were checking didn't exist at all.
+      catch(NullPointerException e) {
+        // In that case, just make a new bullet in it's place!
+        bullets[i] = new Bullet(friendly,birth,life,origin,offset,pattern);
+        // And then break out of the loop because we don't want to keep making new bullets in the array.
         break;
       }
     }
