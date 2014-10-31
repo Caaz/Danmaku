@@ -24,6 +24,7 @@ public class Game extends JPanel  {
     1 - Main Menu
     2 - In Game
     3 - Game Over
+    4 - Debug
   */
   public int level = 0; // Difficulty, sprites being used
   public long wave = 60000; // wave length in milliseconds
@@ -162,11 +163,11 @@ public class Game extends JPanel  {
           //   0     1       2       3        4        5       6       7
           // So now that we know the positions of these buttons...
           if(myKey == player.controls[0]) { // So if myKey equals the 0th element, (Up) we go to the previous element
-            delay = sysTime+keyWait*1000000; // Here we set some keybuffer, the reason for this is because the menu is insane to control if buttons are being spammed.
+            delay = sysTime+keyWait*10; // Here we set some keybuffer, the reason for this is because the menu is insane to control if buttons are being spammed.
             menu.previous(); // And then we move the menu.
           }
           else if(myKey == player.controls[1]) { // Down!
-            delay = sysTime+keyWait*1000000; // Again some framebuffer
+            delay = sysTime+keyWait*10; // Again some framebuffer
             menu.next(); // Now we move next!
           }
           else if(myKey == player.controls[4]) { // Shoot! I asume this will be the button used for selecting or something.
@@ -216,8 +217,48 @@ public class Game extends JPanel  {
         }
       }
     }
+    else if(state == 4) {
+      // Testing grounds.
+          // {"UP", "DOWN", "LEFT", "RIGHT", "SHOOT", "BOMB", "SLOW", "PAUSE"}
+          //   0     1       2       3        4        5       6       7
+      if(keys[player.controls[0]]) { player.velocity[1] -= 1; }
+      if(keys[player.controls[1]]) { player.velocity[1] += 1; }
+      if(keys[player.controls[2]]) { player.velocity[0] -= 1; }
+      if(keys[player.controls[3]]) { player.velocity[0] += 1; }
+      if(keys[player.controls[4]]) {
+        spawnBullet(player,sysTime);
+      }
+      // Actual update shit
+      player.update();
+      updateBullets(sysTime);
+    }
   }
-  
+  public void updateBullets(long time) {
+    for(int i = 0; i < bullets.length; i++) {
+      try {
+        if(bullets[i].living == true) {
+          bullets[i].update(time);
+        }
+      } catch(NullPointerException e) {
+        bullets[i] = new Bullet(player,time);   
+        break;
+      }
+    }
+  }
+  public void spawnBullet(Player player, long time) {
+    // Bullet created by player
+    for(int i = 0; i < bullets.length; i++) {
+      try {
+        if(bullets[i].living == false) {
+          bullets[i] = new Bullet(player,time);       
+          break;
+        }
+      } catch(NullPointerException e) {
+        bullets[i] = new Bullet(player,time);   
+        break;
+      }
+    }
+  }
   
   // Here's where drawing happens!
   public void paintComponent(Graphics g) {
