@@ -46,7 +46,7 @@ public class Game extends JPanel  {
 		};
 		addKeyListener(listener); // This throws it onto the view.
 		setFocusable(true); // This makes it so that you can type in it, kind of important.
-    setPreferredSize(new Dimension(640,480)); // This sets the screen's width and height. Should probably actually make it a 16:9 ratio.
+    setPreferredSize(new Dimension(1280,720)); // This sets the screen's width and height. Should probably actually make it a 16:9 ratio.
   }
   
   
@@ -219,14 +219,41 @@ public class Game extends JPanel  {
     }
     else if(state == 4) {
       // Testing grounds.
-      // {"UP", "DOWN", "LEFT", "RIGHT", "SHOOT", "BOMB", "SLOW", "PAUSE"}
-      //   0     1       2       3        4        5       6       7
       // Actual update shit
-      player.update(sysTime, this); // I wonder if this matters...
+      player.update(sysTime, this);
       updateBullets(sysTime);
+      updateEnemies(sysTime);
     }
   }
   
+  public void updateEnemies(long time) {
+    // Loop through all the available enemies
+    for(int i = 0; i < enemies.length; i++) {
+      // Try block for safety.
+      try {
+        // If the enemy is alive, then let's update it.
+        if(enemies[i].living == true) { enemies[i].update(time); }
+      }
+      // If the enemy was never initialized, it'd throw a null pointer exception.
+      catch(NullPointerException e) {
+        break; // We won't check any more bullets after this one.
+      }
+    }
+  }
+  public void createEnemy(long birth, long life, int pattern[], float offset[], int design) {
+    for(int i = 0; i < enemies.length; i++) {
+      try {
+        if(enemies[i].living == false) {
+          enemies[i] = new Enemy(birth,life,pattern,offset,design);
+          break;
+        }
+      }
+      catch(NullPointerException e) {
+        enemies[i] = new Enemy(birth,life,pattern,offset,design);
+        break;
+      }
+    }
+  }
   // This updates every individual bullet.
   public void updateBullets(long time) {
     // Loop through all the available bullets

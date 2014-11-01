@@ -37,10 +37,11 @@ public class Bullet {
       position[0] = (float)(origin[0] + getDistance(lifeTime) * Math.cos(getAngle(lifeTime)));
       position[1] = (float)(origin[1] + getDistance(lifeTime) * Math.sin(getAngle(lifeTime)));
     }
-    else {
-      // This block happens when the lifetime has been exceeded, we die.
-      die();
-      // The reason this has it's own function is so that we can have the bullet do weird things, perhaps create new bullets on death or something...
+    // If we've exceeded the lifetime, then die.
+    else { die(); }
+    for(int i = 0; i<2; i++) {
+      // Check if we're off screen!
+      if((position[i] < 0) || position[i] > 500) { die(); break; } 
     }
   }
   public float getAngle(long lifeTime) {
