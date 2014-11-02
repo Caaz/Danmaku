@@ -3,31 +3,30 @@ import java.awt.*;
 public class Player extends Living {
   public int controls[] = {0,0,0,0,0,0,0,0}; // Up down left right shoot bomb pause
   public float velocity[] = {0,0};
-  public float maxVelocity = 5;
+  public float velIncrement = (float).5;
+  public float velDecrement = (float)1.2;
   
   // HONESTLY A FIVE DIMENSIONAL ARRAY SEEMED LIKE A GOOD IDEA AT THE TIME.
   public float[][][][][] weapons = {
     {
       // Weapon Type A
       {
-        {{0,0},{1,0}},
-        {{90,0},{1,0}},
-        {{180,0},{1,0}},
-        {{270,0},{1,0}},
+        {{-10,0},{0,0},{0,0}},
+        {{10,0},{0,0},{0,0}},
       },
       {
         // Level 1
-        {{0,0},{0,0}},
-        {{10,0},{0,0}},
-        {{-10,0},{0,0}},
+        {{0,0},{0,0},{0,0}},
+        {{0,0},{10,0},{0,0}},
+        {{0,0},{-10,0},{0,0}},
       },
       {
         // Level 2
-        {{0,0},{0,0}},
-        {{10,0},{0,0}},
-        {{-10,0},{0,0}},
-        {{20,0},{0,0}},
-        {{-20,0},{0,0}},
+        {{0,0},{0,0},{0,0}},
+        {{0,0},{10,0},{0,0}},
+        {{0,0},{-10,0},{0,0}},
+        {{0,0},{20,0},{0,0}},
+        {{0,0},{-20,0},{0,0}},
       }
     },
   };
@@ -52,16 +51,16 @@ public class Player extends Living {
   public void resetControls() { for(int k = 0; k < controls.length; k++) { controls[k] = 0; } }
   public void update(long sysTime, Game game) {
     // {"UP", "DOWN", "LEFT", "RIGHT", "SHOOT", "BOMB", "SLOW", "PAUSE"}
-    if(game.keys[controls[0]]) { velocity[1] -= .5; }
-    if(game.keys[controls[1]]) { velocity[1] += .5; }
-    if(game.keys[controls[2]]) { velocity[0] -= .5; }
-    if(game.keys[controls[3]]) { velocity[0] += .5; }
-    if(game.keys[controls[6]]) { for(int i = 0; i < 2; i++) { velocity[i] = (float)(velocity[i]/1.5); } }
+    if(game.keys[controls[0]]) { velocity[1] -= velIncrement; }
+    if(game.keys[controls[1]]) { velocity[1] += velIncrement; }
+    if(game.keys[controls[2]]) { velocity[0] -= velIncrement; }
+    if(game.keys[controls[3]]) { velocity[0] += velIncrement; }
+    if(game.keys[controls[6]]) { for(int i = 0; i < 2; i++) { velocity[i] = (float)(velocity[i]/velDecrement); } }
     
     // When you shoot, it sets a variable to true! So you can shoot more than one thing at once.
     if(game.keys[controls[4]]) { shooting = true; }
     if(game.keys[controls[5]]) {
-      int pattern[] = {0,1};
+      int pattern[] = {2,1};
       float offset[] = {250,0};
       game.createEnemy(sysTime,10000,pattern,offset,0);
     }
@@ -71,7 +70,13 @@ public class Player extends Living {
       // First make sure this timer thing is okay.
       if(sysTime >= shotWait) {
         // Make a bullet!
-        game.createBullet(true,sysTime,10000,position,weapons[type][level][bIteration][0],weapons[type][level][bIteration][1]);
+        for(int b = 0; b<weapons[type][level].length; b++) {
+          float offset[] = {position[0]+weapons[type][level][b][0][0],position[1]+weapons[type][level][b][0][1]};
+          game.createBullet(true,sysTime,500,offset,weapons[type][level][b][1],weapons[type][level][b][2]);
+          shotWait = sysTime+shotDelay; 
+          shooting = false; 
+        }
+        /*
         // Move to the next bullet iteration.
         bIteration++;
         // if we've exceeded the weapon, go back to 0.
@@ -80,6 +85,7 @@ public class Player extends Living {
           shotWait = sysTime+shotDelay; 
           shooting = false; 
         }
+        */
       }
     }
     // Every tick this is alled.

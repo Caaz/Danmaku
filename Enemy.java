@@ -3,6 +3,8 @@ public class Enemy extends Living {
   int pattern[] = {0,0};  // X, Y
   float offset[] = {0,0};      // X, Y
   float rotation = 0; // radians?
+  double hitbox = 15;
+  int health = 30;
   int design = 0;
   long birth = 0;
   long life = 0;
@@ -35,6 +37,8 @@ public class Enemy extends Living {
     }
     // If we've exceeded the lifetime, then die.
     else { die(); }
+    // If we're out of health, die.
+    if(health <= 0) { die(); }
     /*
     for(int i = 0; i<2; i++) {
       // Check if we're off screen!
@@ -47,6 +51,8 @@ public class Enemy extends Living {
     if(pattern[0] == 0) { return (float)(0+offset[0]); }
     // left to right
     if(pattern[0] == 1) { return (float)((float)(lifeTime)/(float)(life)*600.0-50.0+offset[0]); }
+    // Sine! This oesn't even work right. someone else handle patterns I'm terrible.
+    if(pattern[0] == 2) { return (float)Math.sin(Math.toRadians(((float)(lifeTime)/(float)(life)*360)))*500; }
     // This last one is essentially the else.
     return (float)0;
   }
@@ -59,7 +65,10 @@ public class Enemy extends Living {
     return (float)0;
   }
   public void die() { living = false; }
-  
+  public void hit(Bullet bullet) {
+    health--;
+    bullet.die();
+  }
   
   // Draw code, may or may not have been ripped from player.
   public void draw(Graphics2D g2d, int[] screen, DrawHelper helper) {

@@ -10,6 +10,7 @@ public class Bullet {
   public float[] position = {0,0}; // Angle, Distance
   public float[] offset = {0,0}; // Angle, Distance
   public float[] origin = {0,0}; // X, Y
+  public double hitbox = 2;
   public boolean living = false;
   public boolean friendly = false;
   public Bullet() { } // This probably won't do anything.
@@ -39,10 +40,10 @@ public class Bullet {
     }
     // If we've exceeded the lifetime, then die.
     else { die(); }
-    for(int i = 0; i<2; i++) {
-      // Check if we're off screen!
-      if((position[i] < 0) || position[i] > 500) { die(); break; } 
-    }
+    
+    
+    // This checks if it's offscreen and kills it if it is, but I don't know if that's a good idea.
+    // for(int i = 0; i<2; i++) { if((position[i] < 0) || position[i] > 500) { die(); break; } }
   }
   public float getAngle(long lifeTime) {
     // North

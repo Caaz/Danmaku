@@ -46,7 +46,7 @@ public class Game extends JPanel  {
 		};
 		addKeyListener(listener); // This throws it onto the view.
 		setFocusable(true); // This makes it so that you can type in it, kind of important.
-    setPreferredSize(new Dimension(1280,720)); // This sets the screen's width and height. Should probably actually make it a 16:9 ratio.
+    setPreferredSize(new Dimension(1120,630)); // This sets the screen's width and height. Should probably actually make it a 16:9 ratio.
   }
   
   
@@ -223,6 +223,37 @@ public class Game extends JPanel  {
       player.update(sysTime, this);
       updateBullets(sysTime);
       updateEnemies(sysTime);
+      checkCollisions();
+    }
+  }
+  public void checkCollisions() {
+    // Loop through the bullets...
+    for(int b = 0; b < bullets.length; b++) {
+      try {
+        if(bullets[b].living) {
+          if(bullets[b].friendly) {
+            // If it's a friendly bullet. (Shot by the player)
+            // Loop through enemies
+            for(int e = 0; e < enemies.length; e++) {
+              try {
+                if(enemies[e].living) {
+                  double dist = Math.sqrt(Math.pow(enemies[e].position[0]-bullets[b].position[0],2) + Math.pow(enemies[e].position[1]-bullets[b].position[1],2));
+                  //System.out.println("Got distance " + dist);
+                  dist -= enemies[e].hitbox + bullets[b].hitbox;
+                  if(dist <= 0) {
+                    enemies[e].hit(bullets[b]);
+                  }
+                }
+              }
+              catch(NullPointerException error) { break; }
+            }
+          }
+          else {
+            // This means it's not a friendly bullet, so check it against the player
+          }
+        }
+      }
+      catch(NullPointerException e) { break; }
     }
   }
   
