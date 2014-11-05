@@ -1,6 +1,7 @@
 public class Level {
-  public Bullet bullets[] = new Bullet(256);
-  public Enemy enemies[] = new Enemy(50);
+  public Bullet bullets[] = new Bullet[256];
+  public Enemy enemies[] = new Enemy[50];
+  
   
   public int length = 60;   // Length of level (in seconds)
   public long margin = 5;   // Length of space between start and level, level and end. (nothing happens here!) (in seconds)
@@ -14,10 +15,14 @@ public class Level {
   private long buffer = 0;
   private int iterator = 0;
   
+  public Level() { }
   public Level(long time) {
     start = time;
   }
-  public void update(long time) {
+  public void update(long time, Game game) {
+    updateBullets(time);
+    updateEnemies(time);
+    checkCollisions();
     if(((time-start) < margin*1000) || ((time-start) > margin*1000+length*1000)) {
       // Margins
     }
@@ -26,7 +31,7 @@ public class Level {
       if(time > buffer) {
         //
         iterator++;
-        if(iterator <= groupsize) {
+        if(iterator <= groupSize) {
           
           buffer = time + enemySpace;
         }

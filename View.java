@@ -4,6 +4,7 @@
 */
 import java.awt.*;
 public class View {
+  ImageIcon imageIcon = new ImageIcon(BarcodeModel.class.getResource("verify.gif"));
   private final Color COLORS[] = {
     new Color(0,0,0),       // 0  Black
     new Color(255,255,255), // 1  White
@@ -136,8 +137,11 @@ public class View {
       
       g2d.setColor(COLORS[3]);
       g2d.fillRect(0,0,screen[1],screen[1]);
-      drawBullets(g2d,game.bullets,screen);
-      drawEnemies(g2d,game.enemies,screen);
+      
+      
+      
+      drawBullets(g2d,game.level.bullets,screen);
+      drawEnemies(g2d,game.level.enemies,screen);
       game.player.draw(g2d,screen,this); 
       
       g2d.translate(-(screen[0]/8),0);

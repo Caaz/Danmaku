@@ -64,7 +64,7 @@ public class Player extends Living {
     if(game.keys[controls[5]]) {
       int pattern[] = {2,1};
       float offset[] = {250,0};
-      game.createEnemy(sysTime,10000,pattern,offset,0);
+      game.level.createEnemy(sysTime,10000,pattern,offset,0);
     }
     
     // So if we're shooting...
@@ -80,7 +80,7 @@ public class Player extends Living {
           float offset[] = {position[0]+weapons[type][level][b][0][0],position[1]+weapons[type][level][b][0][1]};
           
           // Then we're creating the bullet.
-          game.createBullet(true,sysTime,300,offset,weapons[type][level][b][1],weapons[type][level][b][2]);
+          game.level.createBullet(true,sysTime,300,offset,weapons[type][level][b][1],weapons[type][level][b][2]);
           
           // And then we set the delay, so that we're not making too many bullets.
           shotWait = sysTime+shotDelay; 
@@ -112,7 +112,7 @@ public class Player extends Living {
   
   // This draws the player
   // I decided to throw in the drawing code here because it /kind of/ makes sense.
-  public void draw(Graphics2D g2d, int[] screen, DrawHelper helper) {
+  public void draw(Graphics2D g2d, int[] screen, View helper) {
     float scale = (float)(screen[1]/500.0*size/32.0);                                     // Get the scale for the player's size.
     g2d.translate(position[0]/500*screen[1],position[1]/500*screen[1]);               // Translate to the player's position.
     

@@ -199,23 +199,12 @@ public class Game extends JPanel  {
     else if(state == 2) {
       // In Game which never happens.
       // We'll do something here later.
-      long lifeTime = sysTime - start;
-      if(lifeTime < calm) {
-        // Waiting.
-      }
-      else if((lifeTime - calm) < wave) {
-        if(lifeTime%spawn == 0) {
-          // spawn enemies
-        }
-      }
     }
     else if(state == 4) {
       // Testing grounds.
       // Actual update shit
       player.update(sysTime, this);
-      updateBullets(sysTime);
-      updateEnemies(sysTime);
-      checkCollisions();
+      level.update(sysTime, this);
     }
   }
   

@@ -63,7 +63,7 @@ public class Bullet {
     // Very simplistic.
     living = false;
   }
-  public void draw(Graphics2D g2d, int[] screen, DrawHelper helper) {
+  public void draw(Graphics2D g2d, int[] screen, View helper) {
     float scale = (float)(screen[1]/500.0*size/32.0);                                   // Scale the bullet shape
     g2d.translate(position[0]/500*screen[1],position[1]/500*screen[1]);             // Translate to the position of the bullet.
     int bullet[][] = {{0,1,0,-1,0},{-1,0,1,0,-1}};                                  // Bullet shape.

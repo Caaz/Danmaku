@@ -72,7 +72,7 @@ public class Enemy extends Living {
   }
   
   // Draw code, may or may not have been ripped from player.
-  public void draw(Graphics2D g2d, int[] screen, DrawHelper helper) {
+  public void draw(Graphics2D g2d, int[] screen, View helper) {
     if(design == 0) {
       float scale = (float)(screen[1]/500.0*size/32.0);
       // Translate to the position
