@@ -1,15 +1,16 @@
 import java.awt.*;
 public class Enemy extends Living {
-  int pattern[] = {0,0};  // X, Y
-  float offset[] = {0,0};      // X, Y
-  float rotation = 0; // radians?
-  double hitbox = 15;
-  int health = 30;
-  int design = 0;
-  long birth = 0;
-  long life = 0;
-  boolean living = false;
-  Color colors[] = {
+  public double size = 80;       // Drawn size
+  public double hitbox = 12;     // Hitbox size (This doesn't scale correctly at all)
+  public int pattern[] = {0,0};  // X, Y
+  public float offset[] = {0,0}; // X, Y
+  public float rotation = 0;     // Radians? Don't touch this.
+  public int health = 30;        // HP is always nice.
+  public int design = 0;         // Design the drawing should use.
+  public long birth = 0;         // When the enemy is born. Don't touch this.
+  public long life = 0;          // How long the enemy will live. Don't touch this.
+  public boolean living = false;
+  public Color colors[] = {
     new Color(20,20,20),  // 0  Outline
     new Color(70,70,70),  // 1  Body
     new Color(60,50,50),  // 2  Body (Darker)
@@ -72,9 +73,8 @@ public class Enemy extends Living {
   
   // Draw code, may or may not have been ripped from player.
   public void draw(Graphics2D g2d, int[] screen, DrawHelper helper) {
-  
     if(design == 0) {
-      float scale = screen[1]/200;
+      float scale = (float)(screen[1]/500.0*size/32.0);
       // Translate to the position
       g2d.translate(position[0]/500*screen[1],position[1]/500*screen[1]);
       
@@ -97,7 +97,6 @@ public class Enemy extends Living {
       helper.drawPolygon(g2d,pit,scale,colors[4],colors[3]);                                    // Draw it
       
       // Maybe work on flame?
-      
       
       // Translate back to wherever we started, so that we don't fuck up drawing after this.
       g2d.translate(-(position[0]/500*screen[1]),-(position[1]/500*screen[1]));

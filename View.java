@@ -3,18 +3,7 @@
   Hopefully this'll help in organization.
 */
 import java.awt.*;
-class DrawHelper {
-  public void drawPolygon(Graphics2D g2d, int[][] points, float scale, Color lines, Color fill) {
-    Polygon wPoly = new Polygon();
-    for(int i = 0; i < points[0].length; i++) { wPoly.addPoint((int)(points[0][i]*scale),(int)(points[1][i]*scale)); }
-    g2d.setColor(fill);
-    g2d.fillPolygon(wPoly);
-    g2d.setColor(lines);
-    g2d.drawPolygon(wPoly);
-  }
-}
 public class View {
-  DrawHelper helper = new DrawHelper();
   private final Color COLORS[] = {
     new Color(0,0,0),       // 0  Black
     new Color(255,255,255), // 1  White
@@ -22,26 +11,21 @@ public class View {
     new Color(100,100,100),    // 3  Dark Gray
     new Color(180,180,180), // 4  Light Gray
   };
-  public void drawBullets(Graphics2D g2d, Bullet bullets[], int[] screen) {
-    for(int i = 0; i < bullets.length; i++) {
+  public void drawPolygon(Graphics2D g2d, int[][] points, float scale, Color lines, Color fill) {
+    Polygon wPoly = new Polygon();
+    for(int i = 0; i < points[0].length; i++) { wPoly.addPoint((int)(points[0][i]*scale),(int)(points[1][i]*scale)); }
+    g2d.setColor(fill);
+    g2d.fillPolygon(wPoly);
+    //g2d.setStroke(new BasicStroke((float)1.5));
+    g2d.setColor(lines);
+    g2d.drawPolygon(wPoly);
+    //g2d.setStroke(new BasicStroke(1));
+  }
+  public void drawEnemies(Graphics2D g2d, Enemy enemies[], int[] screen) {
+    for(int i = 0; i < enemies.length; i++) {
       try{ 
-        if(bullets[i].living) {
-          // Translate to the position of the bullet
-          g2d.translate(bullets[i].position[0]/500*screen[1],bullets[i].position[1]/500*screen[1]);
-          //System.out.println("Drawing bullet at "+bullets[i].position[0]/500*screen[1]+"x"+bullets[i].position[1]/500*screen[1]);
-          float scale = screen[1]/300;
-          
-          int bullet[][] = {{0,2,0,-2,0},{-2,0,2,0,-2}};
-          
-          Color bColor = new Color(200,200,255);
-          if(bullets[i].friendly == false) {
-            bColor = new Color(255,100,100);
-          }
-          
-          helper.drawPolygon(g2d,bullet,scale,new Color(0,0,0),bColor);
-          
-          // Translate back to where we started.
-          g2d.translate(-(bullets[i].position[0]/500*screen[1]),-(bullets[i].position[1]/500*screen[1]));
+        if(enemies[i].living) {
+          enemies[i].draw(g2d, screen, this);
         }
       } catch (NullPointerException e) {
         // we don't need to do anything here, but let's break cause we can assume there's nothing else in the array.
@@ -49,11 +33,12 @@ public class View {
       }
     }
   }
-  public void drawEnemies(Graphics2D g2d, Enemy enemies[], int[] screen, DrawHelper helper) {
-    for(int i = 0; i < enemies.length; i++) {
+  public void drawBullets(Graphics2D g2d, Bullet bullets[], int[] screen) {
+    for(int i = 0; i < bullets.length; i++) {
       try{ 
-        if(enemies[i].living) {
-          enemies[i].draw(g2d, screen, helper);
+        if(bullets[i].living) {
+          bullets[i].draw(g2d, screen, this);
+          bullets[i].draw(g2d, screen, this);
         }
       } catch (NullPointerException e) {
         // we don't need to do anything here, but let's break cause we can assume there's nothing else in the array.
@@ -152,8 +137,8 @@ public class View {
       g2d.setColor(COLORS[3]);
       g2d.fillRect(0,0,screen[1],screen[1]);
       drawBullets(g2d,game.bullets,screen);
-      drawEnemies(g2d,game.enemies,screen,helper);
-      game.player.draw(g2d,screen,helper); 
+      drawEnemies(g2d,game.enemies,screen);
+      game.player.draw(g2d,screen,this); 
       
       g2d.translate(-(screen[0]/8),0);
     

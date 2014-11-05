@@ -1,5 +1,6 @@
 import java.awt.*;
 public class Bullet {
+  public double size = 80;
   public boolean rotates = false;
   public float roation = 0;
   // Pattern pattern = new Pattern();
@@ -18,9 +19,6 @@ public class Bullet {
     this.friendly = friendly;
     this.birth = birth;
     this.life = life;
-    //this.origin = origin;
-    //this.offset = offset;
-    // Have to convert these floats to ints.
     for(int i = 0; i < 2; i++) { 
       this.origin[i] = origin[i];
       this.offset[i] = offset[i];
@@ -65,4 +63,26 @@ public class Bullet {
     // Very simplistic.
     living = false;
   }
+  public void draw(Graphics2D g2d, int[] screen, DrawHelper helper) {
+    float scale = (float)(screen[1]/500.0*size/32.0);                                   // Scale the bullet shape
+    g2d.translate(position[0]/500*screen[1],position[1]/500*screen[1]);             // Translate to the position of the bullet.
+    int bullet[][] = {{0,1,0,-1,0},{-1,0,1,0,-1}};                                  // Bullet shape.
+    helper.drawPolygon(g2d,bullet,scale,new Color(0,0,0), new Color(255,255,255));  // Draw it.
+    g2d.translate(-(position[0]/500*screen[1]),-(position[1]/500*screen[1]));       // Translate back to original position.
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -7,14 +7,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Game extends JPanel  {
+  // -keyWait:long
   private long keyWait = 10; // How long to wait before repeating keys
   private long delay = 0; // When it'll stop waiting. Don't change this.
   public boolean[] keys = new boolean[256]; // This is for keypresses. Is the array too big? Maybe. Good news is boolean is literally a bit.
   private static int SLEEP = 10; // This is how long the thread sleeps between frames or whatever. Probably could be larger without any noticable impact.
   public Player player = new Player(); // This just sets up the player.
-  public Enemy enemies[] = new Enemy[30]; // This sets some empty enemies! PRobably could be bigger. Donno about that.
-  public Bullet bullets[] = new Bullet[255]; // Bullets, everyone loves bullets. We'll see about creating new bullets later on.
-  public View view = new View(); // This is a class used for drawing on screen.
+  public Level level = new Level(); // Level
+  public View view = new View(); // This is a class used for drawing on screen. 
   public Menu menu = new Menu(); // This handles the menu!
   public Grid grid = new Grid(); // This is the grid! Also part of the menu. Probably important.
   // In game shit
@@ -26,12 +26,6 @@ public class Game extends JPanel  {
     3 - Game Over
     4 - Debug
   */
-  public int level = 0; // Difficulty, sprites being used
-  public long wave = 60000; // wave length in milliseconds
-  private long calm = 5000; // Space between waves in milliseconds
-  private long start = 0;
-  private long spawn = 500; // Space between making new enemies
-  private int group = 4; // How many enemies should be spawned with the same pattern
   public Game() {
 		KeyListener listener = new KeyListener() {
       // This is an anonymous class. Or something. Essentially what it does is sets up key events, it changes the key element for whichever is true.
@@ -46,9 +40,8 @@ public class Game extends JPanel  {
 		};
 		addKeyListener(listener); // This throws it onto the view.
 		setFocusable(true); // This makes it so that you can type in it, kind of important.
-    setPreferredSize(new Dimension(1120,630)); // This sets the screen's width and height. Should probably actually make it a 16:9 ratio.
+    setPreferredSize(new Dimension(800,450)); // This sets the screen's width and height. Should probably actually make it a 16:9 ratio.
   }
-  
   
   // This is where the program starts.
   public static void main(String[] args) throws InterruptedException {
@@ -71,7 +64,6 @@ public class Game extends JPanel  {
 			Thread.sleep(SLEEP);
 		}
   }
-  
   
   // This is the game's update tick.
   public void update(long sysTime) {
@@ -114,7 +106,7 @@ public class Game extends JPanel  {
               // If the player control is set, we'll set the string to the name of the key "Shift, Enter, Up, Down, A, D" Etc.
               if(player.controls[l] != 0) { controls[l] = KeyEvent.getKeyText(player.controls[l]); }
               // If the control is the one that's (going to be) selected, we throw on "Press", so that the user knows what button they need to press.
-              else if(l-1 == menu.selected) { controls[l] = "Press "+controls[l]; }
+              else if(l-1 == menu.selected) { controls[l] = "> "+controls[l]+" <"; }
             }
             // Here we update the menu's labels.
             menu.setItems(controls);
@@ -226,107 +218,10 @@ public class Game extends JPanel  {
       checkCollisions();
     }
   }
-  public void checkCollisions() {
-    // Loop through the bullets...
-    for(int b = 0; b < bullets.length; b++) {
-      try {
-        if(bullets[b].living) {
-          if(bullets[b].friendly) {
-            // If it's a friendly bullet. (Shot by the player)
-            // Loop through enemies
-            for(int e = 0; e < enemies.length; e++) {
-              try {
-                if(enemies[e].living) {
-                  double dist = Math.sqrt(Math.pow(enemies[e].position[0]-bullets[b].position[0],2) + Math.pow(enemies[e].position[1]-bullets[b].position[1],2));
-                  //System.out.println("Got distance " + dist);
-                  dist -= enemies[e].hitbox + bullets[b].hitbox;
-                  if(dist <= 0) {
-                    enemies[e].hit(bullets[b]);
-                  }
-                }
-              }
-              catch(NullPointerException error) { break; }
-            }
-          }
-          else {
-            // This means it's not a friendly bullet, so check it against the player
-          }
-        }
-      }
-      catch(NullPointerException e) { break; }
-    }
-  }
   
-  public void updateEnemies(long time) {
-    // Loop through all the available enemies
-    for(int i = 0; i < enemies.length; i++) {
-      // Try block for safety.
-      try {
-        // If the enemy is alive, then let's update it.
-        if(enemies[i].living == true) { enemies[i].update(time); }
-      }
-      // If the enemy was never initialized, it'd throw a null pointer exception.
-      catch(NullPointerException e) {
-        break; // We won't check any more bullets after this one.
-      }
-    }
-  }
-  public void createEnemy(long birth, long life, int pattern[], float offset[], int design) {
-    for(int i = 0; i < enemies.length; i++) {
-      try {
-        if(enemies[i].living == false) {
-          enemies[i] = new Enemy(birth,life,pattern,offset,design);
-          break;
-        }
-      }
-      catch(NullPointerException e) {
-        enemies[i] = new Enemy(birth,life,pattern,offset,design);
-        break;
-      }
-    }
-  }
-  // This updates every individual bullet.
-  public void updateBullets(long time) {
-    // Loop through all the available bullets
-    for(int i = 0; i < bullets.length; i++) {
-      // Try block for safety.
-      try {
-        // If the bullet is alive, then let's update it.
-        if(bullets[i].living == true) { bullets[i].update(time); }
-      }
-      // If the bullet was never initialized, it'd throw a null pointer exception.
-      catch(NullPointerException e) {
-        // Right here I had copied the code from the spawnBullet method, and it was creating a new bullet every time the game started!
-        // Anyway... If we throw this error, this means we've essentially hit the end of the list of bullets that exist, so we can break the loop here for efficiency.
-        break;
-        // Which means we won't check any more bullets after this one.
-      }
-    }
-  }
-  //public Bullet(boolean friendly, long birth, long life, float origin[], float offset[], float pattern[]) {
-  public void createBullet(boolean friendly, long birth, long life, float origin[], float offset[], float pattern[]) {
-    for(int i = 0; i < bullets.length; i++) {
-      // Try for safety!
-      try {
-        // Check if the bullet is living...
-        if(bullets[i].living == false) {
-          // And if it's not, then that means we can place a new bullet here, because it wasn't being used anyway.
-          bullets[i] = new Bullet(friendly,birth,life,origin,offset,pattern);
-          // And then lets break out of this loop because we no longer need to look through the array.
-          break;
-        }
-      }
-      // However there's this problem of if no bullets existed! Or the specific one we were checking didn't exist at all.
-      catch(NullPointerException e) {
-        // In that case, just make a new bullet in it's place!
-        bullets[i] = new Bullet(friendly,birth,life,origin,offset,pattern);
-        // And then break out of the loop because we don't want to keep making new bullets in the array.
-        break;
-      }
-    }
-  }
   
   // Here's where drawing happens!
+  @Override
   public void paintComponent(Graphics g) {
     // Or is it...
     // We make a graphics 2d object from our boring ol graphics object
