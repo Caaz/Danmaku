@@ -18,7 +18,7 @@ public class Game extends JPanel  {
   public Menu menu = new Menu(); // This handles the menu!
   public Grid grid = new Grid(); // This is the grid! Also part of the menu. Probably important.
   // In game shit
-  public int state = 0; // State, see below.
+  public int state = 0; // State, see below. //
   /*
     0 - Set Key controls
     1 - Main Menu
@@ -176,6 +176,7 @@ public class Game extends JPanel  {
             }
             else if(menu.selected == 1) {
               // 1 is start!
+              level = new Level(sysTime);
               state = 2;
             }
             
@@ -199,6 +200,8 @@ public class Game extends JPanel  {
     else if(state == 2) {
       // In Game which never happens.
       // We'll do something here later.
+      player.update(sysTime, this);
+      level.update(sysTime, this);
     }
     else if(state == 4) {
       // Testing grounds.

@@ -36,7 +36,7 @@ public class Player extends Living {
   // Type of weapon
   public int type = 0;
   // Level of weapon
-  public int level = 2;
+  public int level = 0;
   public long shotDelay = 25; // Delay between shots
   public long shotWait = 0; // Leave this alone!
   public boolean shooting = false;

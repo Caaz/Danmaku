@@ -33,6 +33,7 @@ public class Bullet {
     long lifeTime = sysTime - birth;
     if(life > lifeTime) {
       // Here we calculate the x and y coordinates of the bullet by getting the angle and distance and doing magic.
+      float oldPos[] = position;
       position[0] = (float)(origin[0] + getDistance(lifeTime) * Math.cos(getAngle(lifeTime)));
       position[1] = (float)(origin[1] + getDistance(lifeTime) * Math.sin(getAngle(lifeTime)));
     }

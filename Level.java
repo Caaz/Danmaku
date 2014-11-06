@@ -9,20 +9,25 @@ public class Level {
   public long start = 0;    // Start time (in milliseconds)
   
   public int groupSize = 4; // Number of enemies to spawn in a group
-  public long groupSpace = 1000;  // Length of time btween groups (in milliseconds)
-  public long enemySpace = 1000;  // Length of time between enemies in a group (in milliseconds)
+  public long groupSpace = 1000;  // Length of time btween groups (in milliseconds) (this doesn't include the enemy buffer that happens regardless)
+  public long enemySpace = 500;  // Length of time between enemies in a group (in milliseconds)
+  public long enemyLife = 10000; // Time enemies should stay alive. 
   
-  private long buffer = 0;
-  private int iterator = 0;
+  private int patterns[][] = {
+    {0,2},
+  };
+  private float offsets[][] = {
+    {250,0},
+  };
+  
+  private long buffer = 0;  // Don't touch
+  private int iterator = 0; // Don't touch
   
   public Level() { }
   public Level(long time) {
     start = time;
   }
   public void update(long time, Game game) {
-    updateBullets(time);
-    updateEnemies(time);
-    checkCollisions();
     if(((time-start) < margin*1000) || ((time-start) > margin*1000+length*1000)) {
       // Margins
     }
@@ -32,14 +37,18 @@ public class Level {
         //
         iterator++;
         if(iterator <= groupSize) {
-          
+          createEnemy(time,enemyLife,patterns[0],offsets[0],0);
           buffer = time + enemySpace;
         }
         else {
+          iterator = 0;
           buffer = time + groupSpace;
         }
       }
     }
+    updateBullets(time);
+    updateEnemies(time);
+    checkCollisions();
   }
   public void createEnemy(long birth, long life, int pattern[], float offset[], int design) {
     for(int i = 0; i < enemies.length; i++) {
