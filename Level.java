@@ -1,27 +1,52 @@
 public class Level {
   public Bullet bullets[] = new Bullet[256];
   public Enemy enemies[] = new Enemy[50];
+  public Powerup powerups[] = new Powerup[50];
   
   
-  public int length = 60;   // Length of level (in seconds)
+  public int length = 240;   // Length of level (in seconds)
   public long margin = 5;   // Length of space between start and level, level and end. (nothing happens here!) (in seconds)
   
   public long start = 0;    // Start time (in milliseconds)
   
-  public int groupSize = 4; // Number of enemies to spawn in a group
-  public long groupSpace = 1000;  // Length of time btween groups (in milliseconds) (this doesn't include the enemy buffer that happens regardless)
-  public long enemySpace = 500;  // Length of time between enemies in a group (in milliseconds)
-  public long enemyLife = 10000; // Time enemies should stay alive. 
+  public long groupSpace = 2000;  // Length of time btween groups (in milliseconds) (this doesn't include the enemy buffer that happens regardless)
+  public long enemySpace = 1000;  // Length of time between enemies in a group (in milliseconds)
+  public long enemyLife = 5000; // Time enemies should stay alive. 
   
-  private int patterns[][] = {
-    {0,2},
-  };
-  private float offsets[][] = {
-    {250,0},
+  private int groups[][][][] = {
+    //Group
+    {
+      //Enemy
+      {{0,2},{100,0},{0,1}},
+      {{0,2},{250,0},{0,1}},
+      {{0,2},{400,0},{0,1}}
+    },
+    {
+      //Enemy
+      {{0,2},{400,0},{0,1}},
+      {{0,2},{250,0},{0,1}},
+      {{0,2},{100,0},{0,1}}
+    },
+    {
+      //Enemy
+      {{1,2},{0,0},{0,1}},
+      {{1,2},{0,50},{0,1}},
+      {{1,2},{0,150},{0,1}}
+    },
+    {
+      //Enemy
+      {{2,2},{500,0},{0,1}},
+      {{2,2},{500,50},{0,1}},
+      {{2,2},{500,150},{0,1}}
+    },
+    {
+      //Enemy
+      {{0,2},{250,0},{1,2}},
+    },
   };
   
   private long buffer = 0;  // Don't touch
-  private int iterator = 0; // Don't touch
+  private int iterator[] = {0,0}; // Don't touch
   
   public Level() { }
   public Level(long time) {
@@ -35,36 +60,53 @@ public class Level {
       // Actual level time
       if(time > buffer) {
         //
-        iterator++;
-        if(iterator <= groupSize) {
-          createEnemy(time,enemyLife,patterns[0],offsets[0],0);
+        if(iterator[1] <= groups[iterator[0]].length - 1) {
+          float offset[] = {groups[iterator[0]][iterator[1]][1][0],groups[iterator[0]][iterator[1]][1][1]};
+          createEnemy(time,enemyLife,groups[iterator[0]][iterator[1]][0],offset,groups[iterator[0]][iterator[1]][2][1],groups[iterator[0]][iterator[1]][2][0]);
           buffer = time + enemySpace;
+          iterator[1]++;
         }
         else {
-          iterator = 0;
+          iterator[0] = (int)(Math.random()*groups.length);
+          iterator[1] = 0;
           buffer = time + groupSpace;
         }
       }
     }
     updateBullets(time);
     updateEnemies(time);
-    checkCollisions();
+    updatePowerups(time);
+    checkCollisions(game);
   }
-  public void createEnemy(long birth, long life, int pattern[], float offset[], int design) {
+  public void createEnemy(long birth, long life, int pattern[], float offset[], int weapon, int design) {
     for(int i = 0; i < enemies.length; i++) {
       try {
         if(enemies[i].living == false) {
-          enemies[i] = new Enemy(birth,life,pattern,offset,design);
+          enemies[i] = new Enemy(birth,life,pattern,offset,weapon,design);
           break;
         }
       }
       catch(NullPointerException e) {
-        enemies[i] = new Enemy(birth,life,pattern,offset,design);
+        enemies[i] = new Enemy(birth,life,pattern,offset,weapon,design);
         break;
       }
     }
   }
-  public void createBullet(boolean friendly, long birth, long life, float origin[], float offset[], float pattern[]) {
+  public void createPowerup(Powerup pu) {
+    for(int i = 0; i < powerups.length; i++) {
+      try {
+        if(powerups[i].living == false) {
+          powerups[i] = pu;
+          break;
+        }
+      }
+      catch(NullPointerException e) {
+        powerups[i] = pu;
+        break;
+      }
+    }
+  }
+  public void createBullet(boolean friendly, long birth, long life, float origin[], float offset[], int pattern[]) {
     for(int i = 0; i < bullets.length; i++) {
       // Try for safety!
       try {
@@ -91,7 +133,21 @@ public class Level {
       // Try block for safety.
       try {
         // If the enemy is alive, then let's update it.
-        if(enemies[i].living == true) { enemies[i].update(time); }
+        if(enemies[i].living == true) { enemies[i].update(time,this); }
+      }
+      // If the enemy was never initialized, it'd throw a null pointer exception.
+      catch(NullPointerException e) {
+        break; // We won't check any more bullets after this one.
+      }
+    }
+  }
+  public void updatePowerups(long time) {
+    // Loop through all the available enemies
+    for(int i = 0; i < powerups.length; i++) {
+      // Try block for safety.
+      try {
+        // If the enemy is alive, then let's update it.
+        if(powerups[i].living == true) { powerups[i].update(time); }
       }
       // If the enemy was never initialized, it'd throw a null pointer exception.
       catch(NullPointerException e) {
@@ -117,7 +173,7 @@ public class Level {
       }
     }
   }
-  public void checkCollisions() {
+  public void checkCollisions(Game game) {
     // Loop through the bullets...
     for(int b = 0; b < bullets.length; b++) {
       try {
@@ -132,7 +188,7 @@ public class Level {
                   //System.out.println("Got distance " + dist);
                   dist -= enemies[e].hitbox + bullets[b].hitbox;
                   if(dist <= 0) {
-                    enemies[e].hit(bullets[b]);
+                    enemies[e].hit(bullets[b],this);
                   }
                 }
               }
@@ -141,10 +197,30 @@ public class Level {
           }
           else {
             // This means it's not a friendly bullet, so check it against the player
+            double dist = Math.sqrt(Math.pow(game.player.position[0]-bullets[b].position[0],2) + Math.pow(game.player.position[1]-bullets[b].position[1],2));
+            //System.out.println("Got distance " + dist);
+            dist -= game.player.hitbox + bullets[b].hitbox;
+            if(dist <= 0) {
+              game.player.hit(bullets[b], game);
+            }
           }
         }
       }
       catch(NullPointerException e) { break; }
+    }
+    for(int p = 0; p < powerups.length; p++) {
+      try {
+        if(powerups[p].living) {
+          // This means it's not a friendly bullet, so check it against the player
+          double dist = Math.sqrt(Math.pow(game.player.position[0]-powerups[p].position[0],2) + Math.pow(game.player.position[1]-powerups[p].position[1],2));
+          //System.out.println("Got distance " + dist);
+          dist -= game.player.hitbox + powerups[p].hitbox;
+          if(dist <= 0) {
+            game.player.get(powerups[p], game);
+          }
+        }
+      }
+      catch(NullPointerException er) { break; }
     }
   }
 }

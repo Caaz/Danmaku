@@ -46,6 +46,19 @@ public class View {
       }
     }
   }
+  public void drawPowerups(Graphics2D g2d, Powerup powerups[], int[] screen) {
+    for(int i = 0; i < powerups.length; i++) {
+      try{ 
+        if(powerups[i].living) {
+          powerups[i].draw(g2d, screen, this);
+          powerups[i].draw(g2d, screen, this);
+        }
+      } catch (NullPointerException e) {
+        // we don't need to do anything here, but let's break cause we can assume there's nothing else in the array.
+        break;
+      }
+    }
+  }
   public void drawHex(Graphics2D g2d, int width, int height) {
     Polygon p = new Polygon();
     double x = 8.0;
@@ -137,8 +150,11 @@ public class View {
       //g2d.setColor(COLORS[3]);
       //g2d.fillRect(0,0,screen[1],screen[1]);
       
+      g2d.setColor(COLORS[3]);
+      g2d.drawRect(0,0,screen[1],screen[1]);
       drawBullets(g2d,game.level.bullets,screen);
       drawEnemies(g2d,game.level.enemies,screen);
+      drawPowerups(g2d,game.level.powerups,screen);
       game.player.draw(g2d,screen,this); 
       
       g2d.translate(-(screen[0]/8),0);
@@ -153,6 +169,7 @@ public class View {
       
       
       drawBullets(g2d,game.level.bullets,screen);
+      drawEnemies(g2d,game.level.enemies,screen);
       drawEnemies(g2d,game.level.enemies,screen);
       game.player.draw(g2d,screen,this); 
       
