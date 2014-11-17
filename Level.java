@@ -5,7 +5,7 @@ public class Level {
   
   
   public int length = 240;   // Length of level (in seconds)
-  public long margin = 5;   // Length of space between start and level, level and end. (nothing happens here!) (in seconds)
+  public long margin = 1;   // Length of space between start and level, level and end. (nothing happens here!) (in seconds)
   
   public long start = 0;    // Start time (in milliseconds)
   
@@ -42,6 +42,18 @@ public class Level {
     {
       //Enemy
       {{0,2},{250,0},{1,2}},
+    },
+    {
+      //Enemy
+      {{1,0},{0,100},{1,2}},
+      {{2,0},{500,100},{1,2}},
+      {{1,0},{0,100},{1,2}},
+    },
+    {
+      //Enemy
+      {{2,0},{500,100},{1,2}},
+      {{1,0},{0,100},{1,2}},
+      {{2,0},{500,100},{1,2}},
     },
   };
   

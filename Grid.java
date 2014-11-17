@@ -27,13 +27,22 @@ public class Grid {
   public void makeHole() {
     for(int y = 0; y < getHeight(); y++) {
       for(int x = 0; x < getWidth(); x++) {
-        if(((y == 1) || (y == 5)) && (x>=3) && (x<=5)) {
+        if(((y == 1) || (y == 5)) && (x>=4) && (x<=6)) {
           array[x][y].visible = false; 
         }
-        if(((y == 2) || (y == 4)) && (x>=2) && (x<=5)) { 
+        if(((y == 2) || (y == 4)) && (x>=3) && (x<=6)) { 
           array[x][y].visible = false; 
         }
-        if((y == 3) && (x>=2) && (x<=6)) { 
+        if((y == 3) && (x>=3) && (x<=7)) { 
+          array[x][y].visible = false; 
+        }
+      }
+    }
+  }
+  public void makeHolierHole() {
+    for(int y = 0; y < getHeight(); y++) {
+      for(int x = 0; x < getWidth(); x++) {
+        if((x >= 1+y%2) && (x <= 5+y%2)) {
           array[x][y].visible = false; 
         }
       }

@@ -15,6 +15,7 @@ public class Enemy extends Living {
   private boolean shooting = false;
   private long shotWait = 0;
   private int weapon = 0;
+  private int hurt = 0;
   private int weapons[][][][] = {
     // Weapon
     {
@@ -40,12 +41,9 @@ public class Enemy extends Living {
     },
     {
       // Bullet
-      {{0,0}, {0,0}, {0,0},   {2000,1000}},
-      {{0,0}, {90,0}, {0,0},  {2000,1000}},
-      {{0,0}, {270,0}, {0,0}, {2000,1000}},
-      {{0,0}, {0,0}, {0,0},   {4000,1000}},
-      {{0,0}, {90,0}, {0,0},  {4000,1000}},
-      {{0,0}, {270,0}, {0,0}, {4000,1000}},
+      {{0,0}, {0,0}, {0,0},   {2000,0}},
+      {{0,0}, {90,0}, {0,0},  {2000,0}},
+      {{0,0}, {270,0}, {0,0}, {2000,500}},
     },
   };
   private Color colors[] = {
@@ -54,6 +52,8 @@ public class Enemy extends Living {
     new Color(60,50,50),  // 2  Body (Darker)
     new Color(100,50,50), // 3  Window
     new Color(100,20,20), // 4  Window (Darker)
+    new Color(150,0,0),   // 5  Hurt (Body)
+    new Color(100,0,0),   // 6  Hurt (Window)
   };
   public Enemy() { }
   public Enemy(long birth, long life, int pattern[], float offset[], int weapon, int design) {
@@ -147,11 +147,14 @@ public class Enemy extends Living {
     living = false; 
   }
   public void die(Level level) {
-    level.createPowerup(new Powerup(position));
+    if(Math.random() > .5) {
+      level.createPowerup(new Powerup(position));
+    }
     living = false;
   }
   public void hit(Bullet bullet, Level level) {
     health--;
+    hurt = 2;
     bullet.die();
     if(health <= 0) { die(level); }
   }
@@ -162,34 +165,35 @@ public class Enemy extends Living {
     // Translate to the position
     g2d.translate(position[0]/500*screen[1],position[1]/500*screen[1]);
     g2d.rotate(angle);
+    if(hurt > 0) { hurt--; }
     if(design == 0) {
       
       int turret[][] = {{4,5,5,6,6,7,7,5,4},{-2,-3,-5,-5,-3,-2,4,6,6}};                            // Turret shape
-      helper.drawPolygon(g2d,turret,scale,colors[0],colors[1]);                                 // Draw the shape.
+      helper.drawPolygon(g2d,turret,scale,colors[0],colors[(hurt > 0)?5:1]);                                 // Draw the shape.
       for(int f = 0; f < turret[0].length; f++) { turret[0][f] = turret[0][f]-turret[0][f]*2; } // Flip it!
-      helper.drawPolygon(g2d,turret,scale,colors[0],colors[1]);                                 // And draw it again!
+      helper.drawPolygon(g2d,turret,scale,colors[0],colors[(hurt > 0)?5:1]);                                 // And draw it again!
       int jets[][] = {{-2,-2,-1,1,2,2},{0,4,5,5,4,0}};                                      // The jet thing at the back of the ship
-      helper.drawPolygon(g2d,jets,scale,colors[2],colors[1]);                                   // Draw it
+      helper.drawPolygon(g2d,jets,scale,colors[2],colors[(hurt > 0)?5:1]);                                   // Draw it
       int sTur[][] = {
         { 0, 4, 5, 7, 7, 4, 4, 3, 3, 2, 2, 1, 1,-1,-1,-2,-2,-3,-3,-4,-4,-7,-7,-5,-4, 0},        // I hate this shape.
         {2,6,6,4,1, -2, -5, -6, -7, -7, -6, -5, -2, -2, -5, -6, -7, -7, -6, -5, -2,1,4,6,6,2}         // It's the second set of turrets on the enemy ship
       };
-      helper.drawPolygon(g2d,sTur,scale,colors[0],colors[1]);                                   // Draw them
+      helper.drawPolygon(g2d,sTur,scale,colors[0],colors[(hurt > 0)?5:1]);                                   // Draw them
       
       int body[][] = {{0,4,4,2,2,0,-2,-2,-4,-4,0},{2,6,1,-1,-3,-5,-3,-1,1,6,2}};               // Weird triangle hull!
-      helper.drawPolygon(g2d,body,scale,colors[0],colors[1]);                                   // Draw it
+      helper.drawPolygon(g2d,body,scale,colors[0],colors[(hurt > 0)?5:1]);                                   // Draw it
       
       int pit[][] = {{1,1,0,-1,-1},{-1,-3,-4,-3,-1}};                                                // The cockpit window
-      helper.drawPolygon(g2d,pit,scale,colors[4],colors[3]);                                    // Draw it
+      helper.drawPolygon(g2d,pit,scale,colors[4],colors[(hurt > 0)?6:3]);                                    // Draw it
       
       // Maybe work on flame?
     }
     else if(design == 1) {
       scale = (float)(screen[1]/500.0*size/64.0);
       int back[][] = {{-5,5,12,12,5,-5,-12,-12},{-12,-12,-5,5,12,12,5,-5}};
-      helper.drawPolygon(g2d,back,scale,colors[0],colors[1]);
+      helper.drawPolygon(g2d,back,scale,colors[0],colors[(hurt > 0)?5:1]);
       int pit[][] = {{0,2,8,2,0,-2,-8,-2},{-8,-2,0,2,8,2,0,-2}};
-      helper.drawPolygon(g2d,pit,scale,colors[4],colors[3]);
+      helper.drawPolygon(g2d,pit,scale,colors[4],colors[(hurt > 0)?6:3]);
     }
     g2d.rotate(-angle);
     g2d.translate(-(position[0]/500*screen[1]),-(position[1]/500*screen[1]));

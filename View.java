@@ -71,20 +71,23 @@ public class View {
     p.addPoint((int)(8.0/x*scaleX),(int)(7.0/y*scaleY));
     p.addPoint((int)(4.0/x*scaleX),(int)(9.0/y*scaleY));
     p.addPoint((int)(0.0/x*scaleX),(int)(7.0/y*scaleY));
+    g2d.setColor(new Color(0,0,0));
+    g2d.fillPolygon(p);
+    g2d.setColor(new Color(250,250,250));
     g2d.drawPolygon(p);
   }
   public void drawTile(Tile tile, Graphics2D g2d, int x, int y, int width, int height, Menu menu) {
     if(tile.visible) {
       g2d.translate(x,y);
-      
+      /*
       if((tile.menuID >= 0) && (tile.menuID == menu.selected)) { g2d.setColor(COLORS[2]); }
       else { g2d.setColor(tile.color); }
-      
+      */
       drawHex(g2d,width,height);
       
       if(tile.menuID >= 0) {
         g2d.setFont(new Font("SansSerif", Font.PLAIN, (int)(height/9*1.5)));
-        drawCenteredString(menu.get(tile.menuID), width, height, g2d);
+        drawCenteredString((tile.menuID == menu.selected)?"> "+menu.get(tile.menuID)+" <":menu.get(tile.menuID), width, height, g2d);
       }
       
       g2d.translate(-x,-y);
@@ -101,7 +104,7 @@ public class View {
     int hexHeight = hexWidth/8*9;
     g2d.setColor(COLORS[1]);
     boolean off = false;
-    g2d.translate(-hexWidth+hexWidth/2,-hexHeight/9*7);
+    g2d.translate(-hexWidth*2+hexWidth/2,-hexHeight/9*7);
     for(int y = 0; y < game.grid.getHeight(); y++) {
       int leftOffset = 0;
       if(off) { off = false; leftOffset = -hexWidth/2; }
@@ -114,7 +117,7 @@ public class View {
         
       }
     }
-    g2d.translate(hexWidth-hexWidth/2,hexHeight/9*7);
+    g2d.translate(hexWidth*2-hexWidth/2,hexHeight/9*7);
   }
   public void draw(Game game, Graphics2D g2d) {
     // Gets Actual screen dimensions.
@@ -157,6 +160,8 @@ public class View {
       drawPowerups(g2d,game.level.powerups,screen);
       game.player.draw(g2d,screen,this); 
       
+      
+      drawGrid(game,g2d,screen);
       g2d.translate(-(screen[0]/8),0);
     
     }
@@ -178,7 +183,7 @@ public class View {
     }
     // Draw letterbox
     g2d.translate(-margin[0],-margin[1]);
-    g2d.setColor(COLORS[2]);
+    g2d.setColor(COLORS[0]);
     g2d.fillRect(0,0,margin[0],screen[1]);
     g2d.fillRect(0,0,screen[0],margin[1]);
     g2d.translate(res.width,res.height);

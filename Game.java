@@ -72,7 +72,7 @@ public class Game extends JPanel  {
       if(menu.getLength() != 8) {
         System.out.println("Setting Key Config Menu");
         player.resetControls(); // Sets player controls all to 0.
-        int menuPos[][] = {{3,2},{3,4},{3,3},{4,3},{4,2},{5,3},{4,4},{6,3}}; // This is an array of points on the hexagon grid, it's for placing the button names.
+        int menuPos[][] = {{4,2},{4,4},{4,3},{5,3},{5,2},{6,3},{5,4},{7,3}}; // This is an array of points on the hexagon grid, it's for placing the button names.
         String labels[] = {"UP", "DOWN", "LEFT", "RIGHT", "SHOOT", "BOMB", "SLOW", "PAUSE"}; // This is an array of names of the player controls.
         menu = new Menu(labels,0); // This sets the new menu with the labels right here ^ and makes "UP" the selected element
         for(int menuItem = 0; menuItem < menuPos.length; menuItem++) {
@@ -106,7 +106,7 @@ public class Game extends JPanel  {
               // If the player control is set, we'll set the string to the name of the key "Shift, Enter, Up, Down, A, D" Etc.
               if(player.controls[l] != 0) { controls[l] = KeyEvent.getKeyText(player.controls[l]); }
               // If the control is the one that's (going to be) selected, we throw on "Press", so that the user knows what button they need to press.
-              else if(l-1 == menu.selected) { controls[l] = "> "+controls[l]+" <"; }
+              //else if(l-1 == menu.selected) { controls[l] = "> "+controls[l]+" <"; }
             }
             // Here we update the menu's labels.
             menu.setItems(controls);
@@ -134,9 +134,10 @@ public class Game extends JPanel  {
         // This only happens if the menu hasn't been defined yet
         System.out.println("Setting Normal Menu");
         grid.makeHole(); // Here we're setting up this hole in the grid, so that you can see behind it.
-        int menuPos[][] = {{6,2},{7,3},{6,4},{6,5}}; // Another list of points on the grid
+        int menuPos[][] = {{7,2},{8,3},{7,4},{7,5}}; // Another list of points on the grid
         String labels[] = {"Controls","Start","Credits","Testing"}; // Labels of the menu.
         menu = new Menu(labels,1); // Setting up the menu, this time selecting start as the default selected value
+        level = new Level(sysTime);
         for(int menuItem = 0; menuItem < menuPos.length; menuItem++) {
           // Now here's where we set up the menu on the grid. See the key config part if you want to explain this again. Same exact stuff.
           Tile tile;
@@ -176,6 +177,8 @@ public class Game extends JPanel  {
             }
             else if(menu.selected == 1) {
               // 1 is start!
+              grid = new Grid(); // Make a brand new grid! (to close the hole we created)
+              grid.makeHolierHole();
               level = new Level(sysTime);
               state = 2;
             }

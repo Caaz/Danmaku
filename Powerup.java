@@ -45,9 +45,9 @@ public class Powerup extends Living {
     living = false;
   }
   public void draw(Graphics2D g2d, int[] screen, View helper) {
-    float scale = (float)(screen[1]/500.0*size/16.0);
+    float scale = (float)(screen[1]/500.0*size/8.0);
     g2d.translate(position[0]/500*screen[1],position[1]/500*screen[1]);
-    int shape[][] = {{-7,-6,6,7,7,6,-6,-7},{-6,-7,-7,-6,6,7,7,6}};
+    int shape[][] = {{-4,0,4,4,0,-4},{-2,-4,-2,2,4,2}};
     helper.drawPolygon(g2d,shape,scale,colors[type][0], colors[type][1]);
     g2d.translate(-(position[0]/500*screen[1]),-(position[1]/500*screen[1]));
   }

@@ -117,7 +117,8 @@ public class Player extends Living {
   public void die(Game game) {
     //try { Thread.sleep(500); } catch (InterruptedException e) { }
     health--;
-    for(int i = 0; i < 2; i++) { position[i] = 250; }
+    position[0] = 250;
+    position[1] = 400;
     for(int b = 0; b < game.level.bullets.length; b++) {
       try { game.level.bullets[b].die(); }
       catch(NullPointerException y) { }
@@ -128,6 +129,7 @@ public class Player extends Living {
     }
     if(health <= 0) {
       living = false;
+      game.state = 1;
     }
   }
   public void get(Powerup pu, Game game) {
