@@ -183,6 +183,7 @@ public class Game extends JPanel  {
               grid = new Grid(); // Make a brand new grid! (to close the hole we created)
               grid.makeHolierHole();
               level = new Level(sysTime);
+              player.rebirth();
               //player = new Player();
               state = 2;
             }

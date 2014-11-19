@@ -59,7 +59,7 @@ public class View {
       }
     }
   }
-  public void drawHex(Graphics2D g2d, int width, int height) {
+  public void drawHex(Graphics2D g2d, int width, int height, Tile tile) {
     Polygon p = new Polygon();
     double x = 8.0;
     double y = 9.0;
@@ -71,7 +71,7 @@ public class View {
     p.addPoint((int)(8.0/x*scaleX),(int)(7.0/y*scaleY));
     p.addPoint((int)(4.0/x*scaleX),(int)(9.0/y*scaleY));
     p.addPoint((int)(0.0/x*scaleX),(int)(7.0/y*scaleY));
-    g2d.setColor(new Color(0,0,0));
+    g2d.setColor(tile.color);
     g2d.fillPolygon(p);
     g2d.setColor(new Color(250,250,250));
     g2d.drawPolygon(p);
@@ -83,7 +83,7 @@ public class View {
       if((tile.menuID >= 0) && (tile.menuID == menu.selected)) { g2d.setColor(COLORS[2]); }
       else { g2d.setColor(tile.color); }
       */
-      drawHex(g2d,width,height);
+      drawHex(g2d,width,height, tile);
       
       if(tile.menuID >= 0) {
         g2d.setFont(new Font("SansSerif", Font.PLAIN, (int)(height/9*1.5)));

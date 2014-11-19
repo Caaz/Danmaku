@@ -1,3 +1,4 @@
+import java.awt.image.BufferedImage;
 public class Level {
   public Bullet bullets[] = new Bullet[256];
   public Enemy enemies[] = new Enemy[50];
@@ -59,11 +60,13 @@ public class Level {
   
   private long buffer = 0;  // Don't touch
   private int iterator[] = {0,0}; // Don't touch
-  
-  public Level() { }
+  public BufferedImage background = null;
+  public Level() { 
+  }
   public Level(long time) {
     start = time;
     System.out.println("New Level created");
+    
   }
   public void update(long time, Game game) {
     if((time-start) < margin*1000) {
@@ -218,7 +221,7 @@ public class Level {
               catch(NullPointerException error) { break; }
             }
           }
-          else {
+          else if(game.player.living) {
             // This means it's not a friendly bullet, so check it against the player
             double dist = Math.sqrt(Math.pow(game.player.position[0]-bullets[b].position[0],2) + Math.pow(game.player.position[1]-bullets[b].position[1],2));
             //System.out.println("Got distance " + dist);
@@ -231,19 +234,21 @@ public class Level {
       }
       catch(NullPointerException e) { break; }
     }
-    for(int p = 0; p < powerups.length; p++) {
-      try {
-        if(powerups[p].living) {
-          // This means it's not a friendly bullet, so check it against the player
-          double dist = Math.sqrt(Math.pow(game.player.position[0]-powerups[p].position[0],2) + Math.pow(game.player.position[1]-powerups[p].position[1],2));
-          //System.out.println("Got distance " + dist);
-          dist -= game.player.hitbox + powerups[p].hitbox;
-          if(dist <= 0) {
-            game.player.get(powerups[p], game);
+    if(game.player.living) {
+      for(int p = 0; p < powerups.length; p++) {
+        try {
+          if(powerups[p].living) {
+            // This means it's not a friendly bullet, so check it against the player
+            double dist = Math.sqrt(Math.pow(game.player.position[0]-powerups[p].position[0],2) + Math.pow(game.player.position[1]-powerups[p].position[1],2));
+            //System.out.println("Got distance " + dist);
+            dist -= game.player.hitbox + powerups[p].hitbox;
+            if(dist <= 0) {
+              game.player.get(powerups[p], game);
+            }
           }
         }
+        catch(NullPointerException er) { break; }
       }
-      catch(NullPointerException er) { break; }
     }
   }
   //public void draw(Game game, int[] screen, Graphics2D g2d) {}

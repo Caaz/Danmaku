@@ -8,7 +8,7 @@ public class Player extends Living {
   public float velIncrement = (float).5;
   public float velDecrement = (float)1.2;
   public boolean shield = false;
-  
+  public boolean living = true;
   // HONESTLY A FIVE DIMENSIONAL ARRAY SEEMED LIKE A GOOD IDEA AT THE TIME.
   public int[][][][][] weapons = {
     {
@@ -57,6 +57,12 @@ public class Player extends Living {
       position[0] = 250;
       position[1] = 400;
       living = true;
+  }
+  public void rebirth() {
+    level = 0;
+    position[0] = 250;
+    position[1] = 400;
+    living = true;
   }
   public void resetControls() { for(int k = 0; k < controls.length; k++) { controls[k] = 0; } }
   public void update(long sysTime, Game game) {
