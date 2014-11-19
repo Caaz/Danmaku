@@ -45,6 +45,13 @@ public class Enemy extends Living {
       {{0,0}, {90,0}, {0,0},  {2000,0}},
       {{0,0}, {270,0}, {0,0}, {2000,500}},
     },
+    {
+      {{0,0}, {0,0}, {1,1},   {2000,0}},
+      {{0,0}, {90,0}, {1,1},  {2000,0}},
+      {{0,0}, {180,0}, {1,1}, {2000,0}},
+      {{0,0}, {270,0}, {1,1}, {2000,0}},
+      {{0,0}, {0,0}, {0,0},   {2000,500}},
+    },
   };
   private Color colors[] = {
     new Color(20,20,20),  // 0  Outline
@@ -63,6 +70,10 @@ public class Enemy extends Living {
     this.design = design;
     this.offset = offset;
     this.weapon = weapon;
+    if(this.life == 120000) {
+      // Boss!
+      health = 300;
+    }
     // Bring it to life
     living = true;
   }
@@ -140,6 +151,15 @@ public class Enemy extends Living {
         return (float)(Math.pow(percent*100.0-60.0,2)/2.0+150+offset[1]);
       }
     }
+    // Goes until it hits 150. Stops forever.
+    if(pattern[1] == 3) {
+      if(position[1] < 150) {
+        return (float)(position[1]+1);
+      }
+      else {
+        return position[1];
+      }
+    }
     // This last one is essentially the else.
     return (float)0;
   }
@@ -194,6 +214,9 @@ public class Enemy extends Living {
       helper.drawPolygon(g2d,back,scale,colors[0],colors[(hurt > 0)?5:1]);
       int pit[][] = {{0,2,8,2,0,-2,-8,-2},{-8,-2,0,2,8,2,0,-2}};
       helper.drawPolygon(g2d,pit,scale,colors[4],colors[(hurt > 0)?6:3]);
+    }
+    else if(design == 2) {
+      // Boss... ?
     }
     g2d.rotate(-angle);
     g2d.translate(-(position[0]/500*screen[1]),-(position[1]/500*screen[1]));

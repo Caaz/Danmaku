@@ -50,10 +50,17 @@ public class Bullet {
     // North
     if(pattern[0] == 0) { return (float)(Math.toRadians(offset[0]+270)); }
     // Spiral, three times.
-    else if(pattern[0] == 1) { return (float)Math.toRadians(offset[0]+(float)(lifeTime)/(float)(life)*360*3); }
-    // Moves downward, stops for a while, then continues on downward
-    if(pattern[0] == 2) { 
-      float percent = (float)(lifeTime/life);
+    else if(pattern[0] == 1) { float percent = (float)(lifeTime/life); return (float)Math.toRadians(offset[0]+(float)(lifeTime)/(float)(life)*360*2-percent); }
+    // This last one is essentially the else.
+    return (float)0;
+  }
+  public float getDistance(long lifeTime) {
+    // Linear, speed depends on the lifetime of the bullet.
+    if(pattern[1] == 0) { return offset[1]+(float)((float)(lifeTime)/(float)(life)*500.0); }
+    
+    else if(pattern[1] == 1) {
+      float percent = (float)(lifeTime/life); 
+      //System.out.println(percent);
       if(percent < .3) {
         return (float)(-(Math.pow(percent*100.0-30.0,2)/5.0)+150+offset[1]);
       }
@@ -64,13 +71,6 @@ public class Bullet {
         return (float)(Math.pow(percent*100.0-60.0,2)/2.0+150+offset[1]);
       }
     }
-    // This last one is essentially the else.
-    return (float)0;
-  }
-  public float getDistance(long lifeTime) {
-    // Linear, speed depends on the lifetime of the bullet.
-    if(pattern[1] == 0) { return offset[1]+(float)((float)(lifeTime)/(float)(life)*500.0); }
-    
     // Else, static.
     return (float)0;
   }

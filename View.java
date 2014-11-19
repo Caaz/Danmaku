@@ -8,7 +8,7 @@ public class View {
     new Color(0,0,0),       // 0  Black
     new Color(255,255,255), // 1  White
     new Color(0,0,255),     // 2  Blue
-    new Color(100,100,100),    // 3  Dark Gray
+    new Color(100,100,100), // 3  Dark Gray
     new Color(180,180,180), // 4  Light Gray
   };
   public void drawPolygon(Graphics2D g2d, int[][] points, float scale, Color lines, Color fill) {
@@ -111,8 +111,6 @@ public class View {
       else { off = true; }
       for(int x = 0; x < game.grid.getWidth(); x++) {
         Tile tile = game.grid.getTile(x,y);
-        
-        //System.out.println((tile.visible)?"True":"False");
         drawTile(tile,g2d,hexWidth*x+leftOffset,hexHeight/9*7*y,hexWidth,hexHeight,game.menu);
         
       }
@@ -145,8 +143,20 @@ public class View {
     // Translate to the screen's position
     g2d.translate(margin[0],margin[1]);
     
-    if(game.state == 0) { drawGrid(game,g2d,screen); }
-    else if (game.state == 1) { drawGrid(game,g2d,screen); }
+    if(game.state == 0) { 
+      g2d.translate(screen[0]/8,0);
+      drawGrid(game,g2d,screen); 
+      g2d.translate(-(screen[0]/8),0);
+    }
+    else if (game.state == 1) { 
+      g2d.translate(screen[0]/8,0);
+      drawBullets(g2d,game.level.bullets,screen);
+      drawEnemies(g2d,game.level.enemies,screen);
+      drawGrid(game,g2d,screen);
+      g2d.translate(-(screen[0]/8),0);
+      
+      drawGrid(game,g2d,screen); 
+    }
     else if(game.state == 2) { 
       g2d.translate(screen[0]/8,0);
       
@@ -154,12 +164,12 @@ public class View {
       //g2d.fillRect(0,0,screen[1],screen[1]);
       
       g2d.setColor(COLORS[3]);
-      g2d.drawRect(0,0,screen[1],screen[1]);
+      //g2d.drawRect(0,0,screen[1],screen[1]);
       drawBullets(g2d,game.level.bullets,screen);
       drawEnemies(g2d,game.level.enemies,screen);
       drawPowerups(g2d,game.level.powerups,screen);
       game.player.draw(g2d,screen,this); 
-      
+      //gmae.level.draw(g2d,screen,game);
       
       drawGrid(game,g2d,screen);
       g2d.translate(-(screen[0]/8),0);

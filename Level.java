@@ -4,7 +4,7 @@ public class Level {
   public Powerup powerups[] = new Powerup[50];
   
   
-  public int length = 240;   // Length of level (in seconds)
+  public int length = 10;   // Length of level (in seconds)
   public long margin = 1;   // Length of space between start and level, level and end. (nothing happens here!) (in seconds)
   
   public long start = 0;    // Start time (in milliseconds)
@@ -12,7 +12,7 @@ public class Level {
   public long groupSpace = 2000;  // Length of time btween groups (in milliseconds) (this doesn't include the enemy buffer that happens regardless)
   public long enemySpace = 1000;  // Length of time between enemies in a group (in milliseconds)
   public long enemyLife = 5000; // Time enemies should stay alive. 
-  
+  private boolean boss;
   private int groups[][][][] = {
     //Group
     {
@@ -63,10 +63,21 @@ public class Level {
   public Level() { }
   public Level(long time) {
     start = time;
+    System.out.println("New Level created");
   }
   public void update(long time, Game game) {
-    if(((time-start) < margin*1000) || ((time-start) > margin*1000+length*1000)) {
-      // Margins
+    if((time-start) < margin*1000) {
+      // Opening Margin
+      // Maybe find a way to display shit here
+    }
+    if((time-start) > margin*1000+length*1000) {
+      // Ending Margin
+      if(boss == false) {
+        int pattern[] = {0,3};
+        float offset[] = {250,-500};
+        createEnemy(time,120000,pattern,offset,3,0);
+        boss = true;
+      }
     }
     else {
       // Actual level time
@@ -235,4 +246,5 @@ public class Level {
       catch(NullPointerException er) { break; }
     }
   }
+  //public void draw(Game game, int[] screen, Graphics2D g2d) {}
 }
