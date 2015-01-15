@@ -33,6 +33,24 @@ public class Player extends Living {
         {{7,-14},{10,0},{0,0}},
       }
     },
+    {
+      {
+        {{0,-15},{0,0},{0,0}},
+      },
+      {
+        {{0,-14},{80,0},{0,0}},
+        {{0,-15},{0,0},{0,0}},
+        {{0,-14},{280,0},{0,0}},
+      },
+      {
+        {{0,-14},{80,0},{0,0}},
+        {{0,-14},{60,0},{0,0}},
+        {{-7,-14},{0,0},{0,0}},
+        {{7,-14},{0,0},{0,0}},
+        {{0,-14},{300,0},{0,0}},
+        {{0,-14},{280,0},{0,0}},
+      },
+    },
   };
   // Type of weapon
   public int type = 0;
@@ -54,12 +72,12 @@ public class Player extends Living {
   };
   
   public Player() { 
-      position[0] = 250;
-      position[1] = 400;
-      living = true;
+    rebirth();
   }
   public void rebirth() {
     level = 0;
+    health = 3;
+    bombs = 3;
     position[0] = 250;
     position[1] = 400;
     living = true;
@@ -153,6 +171,25 @@ public class Player extends Living {
     if(pu.type == 0) {
       level++;
       if(level >= weapons[type].length) { level--; }
+      pu.die();
+    }
+    else if(pu.type == 1) {
+      level=0;
+      type++;
+      if(type >= 3) { type = 0; }
+      //if(level >= weapons[type].length) { level--; }
+      pu.die();
+    }
+    else if(pu.type == 2) {
+      bombs++;
+      pu.die();
+    }
+    else if(pu.type == 3) {
+      game.score+=1000;
+      pu.die();
+    }
+    else if(pu.type == 4) {
+      health++;
       pu.die();
     }
   }

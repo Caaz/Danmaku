@@ -5,7 +5,7 @@ public class Level {
   public Powerup powerups[] = new Powerup[50];
   
   
-  public int length = 10;   // Length of level (in seconds)
+  public int length = 60;   // Length of level (in seconds)
   public long margin = 1;   // Length of space between start and level, level and end. (nothing happens here!) (in seconds)
   
   public long start = 0;    // Start time (in milliseconds)
@@ -100,9 +100,23 @@ public class Level {
       }
     }
     updateBullets(time);
-    updateEnemies(time);
+    updateEnemies(time, game);
     updatePowerups(time);
     checkCollisions(game);
+    if(game.state == 2) {
+      Tile tile = game.grid.getTile(7,2);
+      tile.setLabel("Level", ""+game.levelNum);
+      tile = game.grid.getTile(7,4);
+      tile.setLabel("Life", ""+game.player.health);
+      tile = game.grid.getTile(7,3);
+      tile.setLabel("Score", ""+game.score);
+      tile = game.grid.getTile(8,3);
+      tile.setLabel("Bomb", ""+game.player.bombs);
+      tile = game.grid.getTile(7,5);
+      tile.setLabel("Power", ""+game.player.level);
+      tile = game.grid.getTile(8,5);
+      tile.setLabel("Weapon", ""+game.player.type);
+    }
   }
   public void createEnemy(long birth, long life, int pattern[], float offset[], int weapon, int design) {
     for(int i = 0; i < enemies.length; i++) {
@@ -153,13 +167,13 @@ public class Level {
       }
     }
   }
-  public void updateEnemies(long time) {
+  public void updateEnemies(long time, Game game) {
     // Loop through all the available enemies
     for(int i = 0; i < enemies.length; i++) {
       // Try block for safety.
       try {
         // If the enemy is alive, then let's update it.
-        if(enemies[i].living == true) { enemies[i].update(time,this); }
+        if(enemies[i].living == true) { enemies[i].update(time,game); }
       }
       // If the enemy was never initialized, it'd throw a null pointer exception.
       catch(NullPointerException e) {
@@ -214,7 +228,7 @@ public class Level {
                   //System.out.println("Got distance " + dist);
                   dist -= enemies[e].hitbox + bullets[b].hitbox;
                   if(dist <= 0) {
-                    enemies[e].hit(bullets[b],this);
+                    enemies[e].hit(bullets[b],game);
                   }
                 }
               }

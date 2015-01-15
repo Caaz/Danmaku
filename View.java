@@ -89,7 +89,14 @@ public class View {
         g2d.setFont(new Font("SansSerif", Font.PLAIN, (int)(height/9*1.5)));
         drawCenteredString((tile.menuID == menu.selected)?"> "+menu.get(tile.menuID)+" <":menu.get(tile.menuID), width, height, g2d);
       }
-      
+      if(tile.label[0].length() > 0) {
+        g2d.setFont(new Font("SansSerif", Font.PLAIN, (int)(height/9)));
+        drawCenteredString(tile.label[0],width,height/2,g2d);
+        g2d.translate(0,height/4);
+        drawCenteredString(tile.label[1],width,height/2,g2d);
+        g2d.translate(0,-height/4);
+        //drawCenteredString((tile.menuID == menu.selected)?"> "+menu.get(tile.menuID)+" <":menu.get(tile.menuID), width, height, g2d);
+      }
       g2d.translate(-x,-y);
     }
   }
@@ -163,7 +170,7 @@ public class View {
       //g2d.setColor(COLORS[3]);
       //g2d.fillRect(0,0,screen[1],screen[1]);
       
-      g2d.setColor(COLORS[3]);
+      //g2d.setColor(COLORS[3]);
       //g2d.drawRect(0,0,screen[1],screen[1]);
       drawBullets(g2d,game.level.bullets,screen);
       drawEnemies(g2d,game.level.enemies,screen);
@@ -175,18 +182,14 @@ public class View {
       g2d.translate(-(screen[0]/8),0);
     
     }
-    else if(game.state == 4) { 
+    else if(game.state == 3) { 
       g2d.translate(screen[0]/8,0);
       
       g2d.setColor(COLORS[3]);
       g2d.fillRect(0,0,screen[1],screen[1]);
       
+      drawCenteredString("Insert Credits here",screen[1],screen[1],g2d);
       
-      
-      drawBullets(g2d,game.level.bullets,screen);
-      drawEnemies(g2d,game.level.enemies,screen);
-      drawEnemies(g2d,game.level.enemies,screen);
-      game.player.draw(g2d,screen,this); 
       
       g2d.translate(-(screen[0]/8),0);
     

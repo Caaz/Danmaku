@@ -17,6 +17,8 @@ public class Game extends JPanel  {
   public View view = new View(); // This is a class used for drawing on screen. 
   public Menu menu = new Menu(); // This handles the menu!
   public Grid grid = new Grid(); // This is the grid! Also part of the menu. Probably important.
+  public long score;
+  public int levelNum = 1;
   // In game shit
   public int state = 0; // State, see below. //
   /*
@@ -73,7 +75,7 @@ public class Game extends JPanel  {
         System.out.println("Setting Key Config Menu");
         player.resetControls(); // Sets player controls all to 0.
         int menuPos[][] = {{3,2},{3,4},{3,3},{4,3},{4,2},{5,3},{4,4},{6,3}}; // This is an array of points on the hexagon grid, it's for placing the button names.
-        String labels[] = {"UP", "DOWN", "LEFT", "RIGHT", "SHOOT", "BOMB", "SLOW", "PAUSE"}; // This is an array of names of the player controls.
+        String labels[] = {"UP", "DOWN", "LEFT", "RIGHT", "SHOOT", "SHIELD", "SLOW", "PAUSE"}; // This is an array of names of the player controls.
         menu = new Menu(labels,0); // This sets the new menu with the labels right here ^ and makes "UP" the selected element
         for(int menuItem = 0; menuItem < menuPos.length; menuItem++) {
           // This loops through each element of the menu array
@@ -99,7 +101,7 @@ public class Game extends JPanel  {
             // So we're good, this is a new key pressed.
             player.controls[menu.selected] = myKey; // Here we set the player control that's selected to the value of myKey. (our new key pressed)
             // we initialize this array to a list of the keys. 
-            String controls[] = {"UP", "DOWN", "LEFT", "RIGHT", "SHOOT", "BOMB", "SLOW", "PAUSE"};
+            String controls[] = {"UP", "DOWN", "LEFT", "RIGHT", "SHOOT", "SHIELD", "SLOW", "PAUSE"};
             for(int l = 0; l < controls.length; l++) {
               // Here we're going through that array...
               
@@ -133,13 +135,13 @@ public class Game extends JPanel  {
       //player.update(sysTime, this);
       level.update(sysTime, this);
       // This state is the menu, so here's what happens.
-      if(menu.getLength() != 3) {
+      if(menu.getLength() != 2) {
         // This only happens if the menu hasn't been defined yet
         System.out.println("Setting Normal Menu");
         grid = new Grid();
         grid.makeHole(); // Here we're setting up this hole in the grid, so that you can see behind it.
-        int menuPos[][] = {{7,2},{8,3},{7,4}}; // Another list of points on the grid
-        String labels[] = {"Controls","Start","Credits"}; // Labels of the menu.
+        int menuPos[][] = {{7,4},{7,2}}; // Another list of points on the grid
+        String labels[] = {"Controls","Start"}; // Labels of the menu.
         menu = new Menu(labels,1); // Setting up the menu, this time selecting start as the default selected value
         for(int menuItem = 0; menuItem < menuPos.length; menuItem++) {
           // Now here's where we set up the menu on the grid. See the key config part if you want to explain this again. Same exact stuff.
@@ -194,6 +196,10 @@ public class Game extends JPanel  {
               // 3 is the testing part
               state = 4;
             }
+            else if(menu.selected == 2) {
+              // 3 is the testing part
+              state = 5;
+            }
             //grid = new Grid();
             String nully[] = {};
             menu = new Menu(nully,0);
@@ -209,8 +215,7 @@ public class Game extends JPanel  {
       }
     }
     else if(state == 2) {
-      // In Game which never happens.
-      // We'll do something here later.
+      // In game!
       player.update(sysTime, this);
       level.update(sysTime, this);
     }

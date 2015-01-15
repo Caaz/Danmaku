@@ -1,6 +1,6 @@
 import java.awt.*;
 public class Bullet {
-  public double size = 120;
+  public double size = 100;
   //public boolean rotates = false;
   //public float roation = 0;
   // Pattern pattern = new Pattern();
@@ -15,6 +15,7 @@ public class Bullet {
   public double hitbox = 2;
   public boolean living = false;
   public boolean friendly = false;
+  public double angle = 0;
   public Bullet() { } // This probably won't do anything.
   public Bullet(boolean friendly, long birth, long life, float origin[], float offset[], int pattern[]) {
     this.friendly = friendly;
@@ -35,9 +36,14 @@ public class Bullet {
     long lifeTime = sysTime - birth;
     if(life > lifeTime) {
       // Here we calculate the x and y coordinates of the bullet by getting the angle and distance and doing magic.
-      float oldPos[] = position;
+      float oldPos[] = new float[2];
+      for(int i = 0; i<2; i++) { oldPos[i] = position[i]; }
       position[0] = (float)(origin[0] + getDistance(lifeTime) * Math.cos(getAngle(lifeTime)+originO[0]));
       position[1] = (float)(origin[1] + getDistance(lifeTime) * Math.sin(getAngle(lifeTime)+originO[0]));
+      if((oldPos[0] != position[0]) || (oldPos[1] != position[1])) {
+        angle = (float)Math.atan2(-(position[0] - oldPos[0]), position[1] - oldPos[1]);
+      }
+      //System.out.println(angle);
     }
     // If we've exceeded the lifetime, then die.
     else { die(); }
@@ -59,7 +65,7 @@ public class Bullet {
     if(pattern[1] == 0) { return offset[1]+(float)((float)(lifeTime)/(float)(life)*500.0); }
     
     else if(pattern[1] == 1) {
-      float percent = (float)(lifeTime/life); 
+      float percent = (float)((float)(lifeTime)/(float)(life)); 
       //System.out.println(percent);
       if(percent < .3) {
         return (float)(-(Math.pow(percent*100.0-30.0,2)/5.0)+150+offset[1]);
@@ -81,10 +87,10 @@ public class Bullet {
   public void draw(Graphics2D g2d, int[] screen, View helper) {
     float scale = (float)(screen[1]/500.0*size/32.0);                               // Scale the bullet shape
     g2d.translate(position[0]/500*screen[1],position[1]/500*screen[1]);             // Translate to the position of the bullet.
-    g2d.rotate(offset[0]);                                                          // Rotate!
-    int bullet[][] = {{0,1,0,-1,0},{-1,0,1,0,-1}};                                  // Bullet shape.
+    g2d.rotate(angle);                                                              // Rotate!
+    int bullet[][] = {{0,1,1,-1,-1},{2,1,-2,-2,1}};                                  // Bullet shape.
     helper.drawPolygon(g2d,bullet,scale,new Color(0,0,0), new Color((friendly)?0:255,0,(friendly)?255:0));  // Draw it.
-    g2d.rotate(-offset[0]);                                                         // Rotate!
+    g2d.rotate(-angle);                                                         // Rotate!
     g2d.translate(-(position[0]/500*screen[1]),-(position[1]/500*screen[1]));       // Translate back to original position.
   }
 }

@@ -46,11 +46,10 @@ public class Enemy extends Living {
       {{0,0}, {270,0}, {0,0}, {2000,500}},
     },
     {
-      {{0,0}, {0,0}, {1,1},   {2000,0}},
-      {{0,0}, {90,0}, {1,1},  {2000,0}},
-      {{0,0}, {180,0}, {1,1}, {2000,0}},
-      {{0,0}, {270,0}, {1,1}, {2000,0}},
-      {{0,0}, {0,0}, {0,0},   {2000,500}},
+      {{0,0}, {0,0}, {1,1},   {20000,0}},
+      {{0,0}, {90,0}, {1,1},  {20000,0}},
+      {{0,0}, {180,0}, {1,1}, {20000,0}},
+      {{0,0}, {270,0}, {1,1}, {20000,700}},
     },
   };
   private Color colors[] = {
@@ -77,7 +76,7 @@ public class Enemy extends Living {
     // Bring it to life
     living = true;
   }
-  public void update(long sysTime, Level level) {
+  public void update(long sysTime, Game game) {
     // Every in game tick, the bullet gets updated here
     // Let's calculate how long the bullet has been alive here (We can later use this in calculations)
     long lifeTime = sysTime - birth;
@@ -106,7 +105,7 @@ public class Enemy extends Living {
             
             // Then we're creating the bullet.
             // public void createBullet(boolean friendly, long birth, long life, float origin[], float offset[], float pattern[]) {
-            level.createBullet(false,sysTime,weapons[weapon][b][3][0],offset,ad,weapons[weapon][b][2]);
+            game.level.createBullet(false,sysTime,weapons[weapon][b][3][0],offset,ad,weapons[weapon][b][2]);
             
             // And then we set the delay, so that we're not making too many bullets.
             shotWait = sysTime+weapons[weapon][b][3][1];
@@ -166,17 +165,23 @@ public class Enemy extends Living {
   public void die() { 
     living = false; 
   }
-  public void die(Level level) {
+  public void die(Game game) {
+    if(this.life == 120000) {
+      game.score+=1000;
+      game.levelNum++;
+      game.level = new Level(System.currentTimeMillis());
+    }
+    game.score+=100;
     if(Math.random() > .5) {
-      level.createPowerup(new Powerup(position));
+      game.level.createPowerup(new Powerup(position));
     }
     living = false;
   }
-  public void hit(Bullet bullet, Level level) {
+  public void hit(Bullet bullet, Game game) {
     health--;
     hurt = 2;
     bullet.die();
-    if(health <= 0) { die(level); }
+    if(health <= 0) { die(game); }
   }
   
   // Draw code, may or may not have been ripped from player.

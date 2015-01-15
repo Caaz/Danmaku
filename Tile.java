@@ -5,6 +5,7 @@ public class Tile {
   public int sprite = 0; // Who knows if this will ever be used
   public Color color = new Color(0,0,0);
   //public String text = "";
+  public String label[] = {"",""};
   public int menuID = -1;
   public Tile() {
   }
@@ -13,5 +14,9 @@ public class Tile {
   }
   public void setID(int i) {
     menuID = i;
+  }
+  public void setLabel(String label, String value) {
+    this.label[0] = label;
+    this.label[1] = value;
   }
 }
